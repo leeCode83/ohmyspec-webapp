@@ -1,26 +1,266 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-fraunces);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/*
+ * Palette "Malam Jawa + Lampu Minyak" — dark-only theme.
+ * Dipilih dari riset poster horor Indonesia modern (Pengabdi Setan 2,
+ * Siksa Kubur): gradasi hitam → biru malam, satu cahaya hangat kuning
+ * kusam, crimson hanya untuk momen dampak yang langka.
+ */
+:root {
+  /* Brand horror tokens (dipakai di seluruh landing) */
+  --night: #0b141e; /* ground — biru malam pekat */
+  --surface-night: #16212e; /* permukaan kartu/section */
+  --parchment: #ede6d6; /* ink — parchment hangat */
+  --lampu: #e8b44a; /* lampu minyak — cahaya hero/CTA */
+  --crimson: #b03a3a; /* momen dampak, jarang (mata kuntilanak) */
+
+  --background: var(--night);
+  --foreground: var(--parchment);
+  --card: var(--surface-night);
+  --card-foreground: var(--parchment);
+  --popover: var(--surface-night);
+  --popover-foreground: var(--parchment);
+  --primary: var(--lampu);
+  --primary-foreground: var(--night);
+  --secondary: var(--surface-night);
+  --secondary-foreground: var(--parchment);
+  --muted: #1a2635;
+  --muted-foreground: #8a94a0;
+  --accent: var(--surface-night);
+  --accent-foreground: var(--parchment);
+  --destructive: var(--crimson);
+  --border: rgba(237, 230, 214, 0.12);
+  --input: rgba(237, 230, 214, 0.15);
+  --ring: var(--lampu);
+  --chart-1: var(--lampu);
+  --chart-2: #8a94a0;
+  --chart-3: var(--crimson);
+  --chart-4: #5a6b7d;
+  --chart-5: var(--surface-night);
+  --radius: 0.625rem;
+  --sidebar: var(--surface-night);
+  --sidebar-foreground: var(--parchment);
+  --sidebar-primary: var(--lampu);
+  --sidebar-primary-foreground: var(--night);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--parchment);
+  --sidebar-border: rgba(237, 230, 214, 0.12);
+  --sidebar-ring: var(--lampu);
+}
+
+/* Landing selalu gelap: sinkronkan varian .dark dengan :root */
+.dark {
+  --background: var(--night);
+  --foreground: var(--parchment);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/*
+ * Keyframes horror landing — semua murni CSS, tanpa library animasi.
+ * Setiap animasi aman untuk prefers-reduced-motion (lihat blok di bawah).
+ */
+
+/* Fog drift: kabut bergerak horizontal perlahan, tiap lapis beda kecepatan */
+@keyframes fog-drift {
+  from {
+    transform: translateX(-10%);
+  }
+  to {
+    transform: translateX(10%);
+  }
+}
+
+/* Moon breathing: glow bulan bernapas sangat pelan */
+@keyframes moon-breathe {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+/* Flicker lampu minyak: sesekali berkedip seperti cahaya kena angin */
+@keyframes lamp-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  3% {
+    opacity: 0.4;
+  }
+  5% {
+    opacity: 0.9;
+  }
+  7% {
+    opacity: 0.5;
+  }
+  9%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Kuntilanak materialize: muncul perlahan dari kegelapan (hero entrance) */
+@keyframes materialize {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 0.5;
+    filter: blur(0);
+  }
+}
+
+/* Sway: goyangan halus siluet kuntilanak ±1deg */
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(1deg);
+  }
+}
+
+/* Eye-glow: mata crimson menyala sekejap lalu padam (interval di-set inline) */
+@keyframes eye-glow {
+  0%,
+  92%,
+  100% {
+    opacity: 0;
+  }
+  94%,
+  97% {
+    opacity: 1;
+  }
+}
+
+/* Petal fall: kembang kamboja melayang turun sambil berputar */
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(110vh) rotate(320deg);
+    opacity: 0;
+  }
+}
+
+/* Hero entrance: konten muncul berurutan via animation-delay */
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility classes animasi */
+@utility animate-fog {
+  animation: fog-drift 40s ease-in-out infinite alternate;
+}
+@utility animate-moon {
+  animation: moon-breathe 9s ease-in-out infinite;
+}
+@utility animate-lamp {
+  animation: lamp-flicker 11s linear infinite;
+}
+@utility animate-materialize {
+  animation: materialize 8s ease-out forwards;
+}
+@utility animate-sway {
+  animation: sway 7s ease-in-out infinite;
+}
+@utility animate-hero-enter {
+  opacity: 0;
+  animation: hero-enter 0.7s ease-out forwards;
+}
+
+/* Hormati preferensi reduced motion: semua animasi berhenti, konten tetap terlihat */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .animate-hero-enter,
+  [class*="animate-"] {
+    opacity: 1 !important;
+  }
 }
