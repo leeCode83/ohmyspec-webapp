@@ -1,6 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
-  <!-- Kuntilanak — ikon produk. Siluet flat-vector: rambut panjang menutupi
-       wajah, gaun mengalir. fill="currentColor" agar bisa di-tint via CSS. -->
+  <!-- Kuntilanak — ikon produk (versi kartu). Siluet flat-vector dengan
+       interior negative space: helai rambut, lipatan gaun, celah lengan dipotong
+       dengan fill="none"/warna ground. fill="currentColor" agar bisa di-tint CSS. -->
+  <!-- Negative space: helai rambut tipis -->
+  <g stroke="currentColor" stroke-opacity="0.45" stroke-width="1.4" fill="none">
+    <path d="M78 52 C74 88 70 130 66 168"/>
+    <path d="M90 44 C88 90 86 140 82 190"/>
+    <path d="M100 42 L100 196"/>
+    <path d="M110 44 C112 90 114 140 118 190"/>
+    <path d="M122 52 C126 88 130 130 134 168"/>
+  </g>
   <g fill="currentColor">
     <!-- rambut panjang dari kepala turun ke dada -->
     <path d="M100 18 C78 18 66 34 66 56 C66 78 60 100 62 124 C64 138 72 146 80 148 C76 132 78 116 82 104 C86 118 88 132 86 146 L114 146 C112 132 114 118 118 104 C122 116 124 132 120 148 C128 146 136 138 138 124 C140 100 134 78 134 56 C134 34 122 18 100 18 Z"/>
