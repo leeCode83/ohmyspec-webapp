@@ -11,24 +11,24 @@ export function Hero() {
   return (
     <section
       id="summon"
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-16 text-center"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-24 text-center md:min-h-screen"
     >
-      {/* Gradient malam: biru atas → hampir hitam di bawah */}
+      {/* Langit malam: biru pekat di atas, hitam pekat di horizon */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-b from-[#0d1826] via-[#0b141e] to-[#050a10]"
+        className="absolute inset-0 bg-gradient-to-b from-[#0f1c2c] via-[#0b141e] to-[#04080d]"
       />
-      {/* Beringin di horizon — latar, tidak boleh menutupi CTA */}
+      {/* Cakrawala beringin nyaris hitam, menyatu dengan tanah */}
       <img
         aria-hidden
         src="/horror/beringin.svg"
         alt=""
-        className="pointer-events-none absolute bottom-0 left-1/2 w-[85%] max-w-none -translate-x-1/2 text-[#040a12] opacity-60 md:w-[70%]"
+        className="pointer-events-none absolute bottom-0 left-1/2 w-[110%] max-w-none -translate-x-1/2 text-[#030910] md:w-[85%]"
       />
-      <FogLayers />
       <HeroScene />
 
-      <div className="relative z-10 flex max-w-3xl flex-col items-center gap-6 [text-shadow:0_1px_10px_rgba(5,10,16,0.9)]">
+      {/* Copy: digeser ke kanan agar tidak menabrak siluet Kuntilanak */}
+      <div className="relative z-10 flex max-w-2xl flex-col items-center gap-6 md:ml-[22%] [text-shadow:0_1px_10px_rgba(5,10,16,0.9)]">
         <p
           className="animate-hero-enter text-xs uppercase tracking-[0.22em] text-muted-foreground"
           style={{ animationDelay: "0.1s" }}

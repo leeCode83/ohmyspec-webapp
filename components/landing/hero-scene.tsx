@@ -1,12 +1,12 @@
 /**
- * HeroScene — lapisan animasi horror hero (berjalan terus, murni CSS):
- * 1. Moon breathing + flicker lampu minyak (siklus 9s / flicker 11s).
- * 2. Kuntilanak materialize perlahan (8s) lalu sway halus;
- *    mata crimson menyala sekejap tiap siklus 14s — satu-satunya
- *    momen crimson, "dia melihatmu".
- * 3. Kembang tujuh rupa: 5 petal kamboja jatuh dengan durasi/delay beda.
- * Semua aria-hidden, pointer-events-none, dan aman prefers-reduced-motion
- * (animasi berhenti, konten tetap terlihat — lihat guard di globals.css).
+ * HeroScene — komposisi poster horor Indonesia untuk layar pertama:
+ * 1. Bulan purnama (kanan atas) yang bernapas + flicker lampu minyak.
+ * 2. Kuntilanak cut-out di kiri, materialize perlahan lalu sway; mata
+ *    crimson menyala sekejap tiap siklus 14s dan juga saat di-hover.
+ * 3. Kembang tujuh rupa: petal kamboja jatuh dengan durasi beda.
+ * 4. Kegelapan tepi (vignette) untuk mood "terkendali".
+ * Semua aria-hidden, pointer-events-none; prefers-reduced-motion aman
+ * (lihat guard di globals.css).
  */
 const PETALS = [
   { left: "8%", duration: "26s", delay: "0s", size: 22 },
@@ -19,47 +19,52 @@ const PETALS = [
 export function HeroScene() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* Vignette: tepi gelap, pusat tetap terbaca */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,transparent_35%,rgba(2,6,10,0.85)_100%)]" />
+
       {/* Bulan purnama: breathing + sesekali flicker seperti lampu kena angin */}
-      <div className="absolute right-[12%] top-[14%] md:right-[18%]">
+      <div className="absolute right-[10%] top-[10%] md:right-[14%] md:top-[12%]">
         <img
           src="/horror/moon.svg"
           alt=""
-          className="animate-moon h-28 w-28 rounded-full md:h-40 md:w-40"
+          className="h-32 w-32 rounded-full md:h-60 md:w-60"
           style={{
-            filter: "drop-shadow(0 0 40px rgba(238,226,190,0.55))",
+            filter:
+              "drop-shadow(0 0 60px rgba(238,226,190,0.45)) drop-shadow(0 0 120px rgba(232,180,74,0.18))",
             animation: "moon-breathe 9s ease-in-out infinite",
           }}
         />
-        {/* Halo flicker di sekeliling bulan */}
+        {/* Halo flicker: lebih lebar, menyatu ke kegelapan */}
         <div
-          className="absolute inset-[-40%] rounded-full"
+          className="absolute inset-[-70%] rounded-full"
           style={{
             background:
-              "radial-gradient(circle, rgba(232,180,74,0.18) 0%, transparent 70%)",
+              "radial-gradient(circle, rgba(232,180,74,0.16) 0%, rgba(232,180,74,0.04) 45%, transparent 70%)",
             animation: "lamp-flicker 11s linear infinite",
           }}
         />
       </div>
 
-      {/* Kuntilanak: materialize pelan, sway, mata crimson menyala sekejap */}
+      {/* Kuntilanak poster: materialize pelan, lalu sway; mata menyala saat hover */}
       <div
-        className="absolute bottom-[14%] left-[10%] w-28 opacity-0 md:left-[16%] md:w-40 max-sm:hidden"
+        className="group absolute bottom-0 left-[2%] w-[220px] opacity-0 md:left-[7%] md:w-[340px] lg:w-[380px]"
         style={{
-          color: "#030a12",
-          // Materialize sekali (forwards), lalu sway terus-menerus berjalan paralel
           animation:
-            "materialize 8s ease-out 1s forwards, sway 7s ease-in-out 9s infinite",
+            "materialize 9s ease-out 0.8s forwards, sway 8s ease-in-out 10s infinite",
         }}
       >
-        <img src="/horror/kuntilanak.svg" alt="" className="h-auto w-full" />
-        {/* Mata: glow crimson tiap siklus 14s (92-97% dari keyframes) */}
+        <img
+          src="/horror/kuntilanak-poster.svg"
+          alt=""
+          className="h-auto w-full translate-y-[6%] drop-shadow-[0_0_40px_rgba(232,180,74,0.08)]"
+        />
+        {/* Mata: menyala tiap 14s (keyframes) atau langsung saat hover */}
         <span
-          className="eye-glow absolute right-[62%] top-[9%] h-1 w-1 rounded-full md:h-1.5 md:w-1.5"
+          className="eye-glow absolute left-[41%] top-[14.5%] h-2 w-8 rounded-full opacity-0 transition-opacity group-hover:opacity-100 md:top-[14%]"
           style={{
-            background: "var(--crimson)",
-            boxShadow: "0 0 8px 2px rgba(176,58,58,0.8)",
+            background:
+              "radial-gradient(ellipse at center, rgba(176,58,58,0.95) 0%, transparent 70%)",
             animation: "eye-glow 14s linear infinite",
-            opacity: 0,
           }}
         />
       </div>

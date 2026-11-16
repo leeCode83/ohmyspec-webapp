@@ -1,4 +1,4 @@
-import { SpecMock } from "@/components/landing/spec-mock";
+import { SpecMock } from "@/src/components/landing/spec-mock";
 import { Section } from "@/components/landing/section";
 
 /**
