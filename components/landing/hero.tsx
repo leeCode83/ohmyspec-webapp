@@ -13,9 +13,9 @@ export function Hero() {
   return (
     <section
       id="start"
-      className="relative flex min-h-[calc(100svh-64px)] items-center py-10 md:py-12"
+      className="relative flex min-h-[calc(100svh-64px)] items-center pt-8 pb-16 md:pt-10 md:pb-24"
     >
-      <div className="wrap grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
+      <div className="wrap grid gap-10 lg:grid-cols-2 lg:items-center">
         <div className="max-w-xl">
           <p
             className="animate-sheet-in type-label flex items-center gap-3 text-primary"
@@ -71,7 +71,7 @@ export function Hero() {
 
         {/* Drawing frame: garis cobalt ganda ala template gambar teknik */}
         <figure
-          className="animate-sheet-in relative border-2 border-primary/80 p-2 md:p-3"
+          className="animate-sheet-in relative border-2 border-primary/80 p-2 md:p-3 lg:justify-self-end lg:w-[calc(100%-2rem)]"
           style={{ animationDelay: "0.2s" }}
         >
           {/* Tanda sudut mengukur di luar bingkai (corner ticks) */}

@@ -2,6 +2,7 @@ import { Nav } from "@/components/landing/nav";
 import { Hero } from "@/components/landing/hero";
 import { ToolSection } from "@/components/landing/tool-section";
 import { ProcessSection } from "@/components/landing/process-section";
+import { DrawingTableSection } from "@/components/landing/drawing-table-section";
 import { Footer } from "@/components/landing/footer";
 
 /**
@@ -16,6 +17,7 @@ export default function Home() {
         <Hero />
         <ToolSection />
         <ProcessSection />
+        <DrawingTableSection />
       </main>
       <Footer />
     </>
