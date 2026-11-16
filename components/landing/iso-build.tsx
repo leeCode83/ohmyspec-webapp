@@ -9,9 +9,9 @@
  * hard hat sebagai aksen Bob. Dekoratif: aria-hidden, reduced-motion =
  * gambar utuh.
  */
-const INK = "#1f2de6"; // cobalt — garis bangunan
-const DIM = "#8a6a2a"; // teks dimensi di atas kertas
-const HAT = "#e8a33d"; // kuning hard hat — satu aksen isi
+const INK = "var(--cobalt)"; // cobalt — garis bangunan
+const DIM = "var(--dim-ink)"; // teks dimensi di atas kertas
+const HAT = "var(--hard-hat)"; // kuning hard hat — satu aksen isi
 
 type Part = { d: string; delay: number; dash?: string };
 
