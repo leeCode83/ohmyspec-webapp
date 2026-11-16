@@ -5,27 +5,26 @@ import type { ReactNode } from "react";
 /**
  * Section — wadah satu section landing (SRP: hanya layout, tidak tahu isi).
  * Satu section per layar: padding vertikal konsisten + `.wrap` dengan
- * edge kiri-kanan sama. `tone` mengatur latar: "night" (default, ground)
- * atau "surface" (biru gelap lebih terang, untuk memisahkan section).
+ * edge kiri-kanan sama. `tone` mengatur latar: "sheet" (default, kertas
+ * bergaris) atau "panel" (kertas lebih gelap untuk memisahkan section).
  */
 export function Section({
   children,
   className,
-  tone = "night",
+  tone = "sheet",
   id,
 }: {
   children: ReactNode;
   className?: string;
-  tone?: "night" | "surface";
+  tone?: "sheet" | "panel";
   id?: string;
 }) {
   return (
     <section
       id={id}
       className={cn(
-        // min-h-screen: satu section per layar (gates screen-short/neighbour)
-        "relative flex min-h-screen w-full items-center py-24 md:py-32",
-        tone === "surface" ? "bg-card" : "bg-background",
+        "relative flex min-h-[calc(100svh-4rem)] w-full items-center py-24 md:py-32",
+        tone === "panel" && "bg-card",
         className,
       )}
     >
