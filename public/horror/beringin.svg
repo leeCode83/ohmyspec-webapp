@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" preserveAspectRatio="xMidYMax meet">
+  <!-- Pohon beringin siluet — latar horizon hero, panikel tiang (aerial
+       roots) khas beringin memberi kesan mistis. fill="currentColor". -->
+  <g fill="currentColor">
+    <!-- kanopi lebar -->
+    <ellipse cx="300" cy="120" rx="280" ry="110"/>
+    <ellipse cx="140" cy="160" rx="130" ry="70"/>
+    <ellipse cx="460" cy="160" rx="130" ry="70"/>
+    <!-- batang -->
+    <path d="M282 210 L272 400 L328 400 L318 210 Z"/>
+    <!-- cabang -->
+    <path d="M286 240 C240 230 200 236 160 258 L164 266 C204 246 242 242 288 252 Z"/>
+    <path d="M314 240 C360 230 400 236 440 258 L436 266 C396 246 358 242 312 252 Z"/>
+    <!-- panikel / akar gantung khas beringin -->
+    <g opacity="0.9">
+      <rect x="180" y="200" width="4" height="150" rx="2"/>
+      <rect x="230" y="190" width="3" height="180" rx="1.5"/>
+      <rect x="370" y="190" width="4" height="160" rx="2"/>
+      <rect x="420" y="200" width="3" height="140" rx="1.5"/>
+      <rect x="120" y="210" width="3" height="120" rx="1.5"/>
+      <rect x="480" y="210" width="4" height="130" rx="2"/>
+      <rect x="300" y="205" width="3" height="150" rx="1.5"/>
+    </g>
+    <!-- akar pijak di tanah -->
+    <path d="M250 390 C240 380 220 376 200 380 L204 396 L262 396 Z"/>
+    <path d="M350 390 C360 380 380 376 400 380 L396 396 L338 396 Z"/>
+  </g>
+</svg>

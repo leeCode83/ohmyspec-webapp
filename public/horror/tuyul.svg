@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+  <!-- Tuyul — mascot asisten AI: kecil, botak, bekerja diam-diam
+       sambil "memakan" token BYOK. fill="currentColor". -->
+  <g fill="currentColor">
+    <!-- kepala botak besar khas tuyul -->
+    <ellipse cx="100" cy="72" rx="42" ry="48"/>
+    <!-- telinga kecil -->
+    <ellipse cx="58" cy="76" rx="8" ry="12"/>
+    <ellipse cx="142" cy="76" rx="8" ry="12"/>
+    <!-- tubuh kecil crouching -->
+    <path d="M72 118 C64 140 60 168 62 196 C64 220 76 236 100 236 C124 236 136 220 138 196 C140 168 136 140 128 118 Z"/>
+    <!-- tangan kecil meraih koin -->
+    <path d="M64 140 C50 150 40 164 36 176 C34 182 40 186 44 182 C50 172 60 160 70 152 Z"/>
+    <path d="M136 140 C150 150 160 164 164 176 C166 182 160 186 156 182 C150 172 140 160 130 152 Z"/>
+    <!-- koin yang "dicuri" -->
+    <circle cx="30" cy="196" r="12"/>
+    <circle cx="172" cy="188" r="9"/>
+  </g>
+</svg>

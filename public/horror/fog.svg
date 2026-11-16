@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="none">
+  <!-- Lapis fog: bentuk blob blur lebar, dipakai berulang 3x dengan
+       kecepatan/opacity/ukuran berbeda (parallax via CSS animation). -->
+  <g fill="#e8e3f0">
+    <ellipse cx="200" cy="180" rx="340" ry="70" opacity="0.35"/>
+    <ellipse cx="620" cy="220" rx="420" ry="80" opacity="0.28"/>
+    <ellipse cx="1000" cy="160" rx="360" ry="65" opacity="0.32"/>
+    <ellipse cx="420" cy="120" rx="280" ry="55" opacity="0.22"/>
+    <ellipse cx="860" cy="90" rx="300" ry="50" opacity="0.18"/>
+  </g>
+</svg>
