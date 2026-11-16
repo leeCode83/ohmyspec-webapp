@@ -32,12 +32,22 @@ export function SpecBoard() {
           <p className="text-[10px] uppercase tracking-[0.16em] text-primary">
             # Spec · Auth service
           </p>
-          <p className="font-semibold text-foreground">## Session model</p>
+          <p className="flex items-center gap-1.5 font-semibold text-foreground">
+            <span aria-hidden className="font-mono text-primary">
+              H2
+            </span>
+            Session model
+          </p>
           <p>
             Sessions are signed JWTs issued by Supabase Auth and rotated
             every 60 minutes.
           </p>
-          <p className="font-semibold text-foreground">## Acceptance criteria</p>
+          <p className="flex items-center gap-1.5 font-semibold text-foreground">
+            <span aria-hidden className="font-mono text-primary">
+              H2
+            </span>
+            Acceptance criteria
+          </p>
           <ul className="space-y-1">
             {ACCEPTANCE.map((line, i) => (
               <li key={line} className="flex items-start gap-2">

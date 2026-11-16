@@ -23,7 +23,7 @@ const NOTES = [
   },
   {
     no: "N-03",
-    title: "Ask the workspace, not the file",
+    title: "The workspace answers as well as the file",
     body: "Every document is chunked and embedded, so the assistant can quote another spec by section.",
   },
   {
