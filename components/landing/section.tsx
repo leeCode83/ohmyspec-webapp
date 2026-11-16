@@ -23,12 +23,13 @@ export function Section({
     <section
       id={id}
       className={cn(
-        "relative w-full px-6 py-24 md:px-10 md:py-32",
+        // min-h-screen: satu section per layar (gates screen-short/neighbour)
+        "relative flex min-h-screen w-full items-center py-24 md:py-32",
         tone === "surface" ? "bg-card" : "bg-background",
         className,
       )}
     >
-      <div className="mx-auto w-full max-w-6xl">{children}</div>
+      <div className="wrap">{children}</div>
     </section>
   );
 }

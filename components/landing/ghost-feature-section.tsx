@@ -91,14 +91,14 @@ export function GhostFeatureSection() {
           >
             <CardContent className="flex h-full flex-col gap-4 p-6">
               {/* Siluet: menggelap saat idle, menyala saat hover */}
-              <div className="flex h-36 items-center justify-center">
+              <div className="flex h-36 items-center justify-center overflow-hidden">
                 <Image
                   src={ghost.src}
                   alt=""
                   width={ghost.width}
                   height={ghost.height}
                   className={cn(
-                    "h-auto object-contain text-[#1d2c3d] transition-all duration-300",
+                    "max-h-36 w-auto object-contain text-[#1d2c3d] transition-all duration-300",
                     "group-hover:scale-[1.03] group-hover:brightness-[2.2]",
                   )}
                   style={{
@@ -110,7 +110,7 @@ export function GhostFeatureSection() {
                 <h3 className="font-heading text-xl font-semibold text-foreground">
                   {ghost.name}
                 </h3>
-                <p className="mt-1 text-sm italic text-muted-foreground/80">
+                <p className="mt-1 text-sm italic text-muted-foreground">
                   {ghost.lore}
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-foreground/90">

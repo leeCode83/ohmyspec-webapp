@@ -18,17 +18,17 @@ export function Hero() {
         aria-hidden
         className="absolute inset-0 bg-gradient-to-b from-[#0d1826] via-[#0b141e] to-[#050a10]"
       />
-      {/* Beringin di horizon */}
+      {/* Beringin di horizon — latar, tidak boleh menutupi CTA */}
       <img
         aria-hidden
         src="/horror/beringin.svg"
         alt=""
-        className="pointer-events-none absolute bottom-0 left-1/2 w-[130%] max-w-none -translate-x-1/2 text-[#040a12] opacity-90 md:w-[110%]"
+        className="pointer-events-none absolute bottom-0 left-1/2 w-[85%] max-w-none -translate-x-1/2 text-[#040a12] opacity-60 md:w-[70%]"
       />
       <FogLayers />
       <HeroScene />
 
-      <div className="relative z-10 flex max-w-3xl flex-col items-center gap-6">
+      <div className="relative z-10 flex max-w-3xl flex-col items-center gap-6 [text-shadow:0_1px_10px_rgba(5,10,16,0.9)]">
         <p
           className="animate-hero-enter text-sm uppercase tracking-[0.35em] text-muted-foreground"
           style={{ animationDelay: "0.1s" }}
@@ -58,16 +58,16 @@ export function Hero() {
         >
           <Button
             size="lg"
-            className="shadow-[0_0_28px_rgba(232,180,74,0.45)] transition-shadow hover:shadow-[0_0_40px_rgba(232,180,74,0.65)]"
+            className="h-12 px-6 shadow-[0_0_28px_rgba(232,180,74,0.45)] transition-shadow hover:shadow-[0_0_40px_rgba(232,180,74,0.65)]"
           >
             Summon the workspace
           </Button>
-          <Button size="lg" variant="outline">
+          <Button size="lg" variant="outline" className="h-12 px-6">
             Read the lore
           </Button>
         </div>
         <p
-          className="animate-hero-enter mt-4 text-xs text-muted-foreground/70"
+          className="animate-hero-enter mt-4 text-xs text-muted-foreground"
           style={{ animationDelay: "0.7s" }}
         >
           Free and open source · Bring your own key · Self-hostable

@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button";
 export function Nav() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-border/40 bg-background/70 backdrop-blur-sm">
-      <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6 md:px-10">
+      <nav className="wrap flex h-16 items-center justify-between">
+        {/* min-h 44px: wordmark tetap tap target penuh di mobile */}
         <Link
           href="/"
-          className="font-heading text-xl font-semibold tracking-wide text-foreground"
+          className="flex min-h-[44px] items-center font-heading text-xl font-semibold tracking-wide text-foreground"
         >
           Ohmy<span className="text-primary">Spec</span>
         </Link>
@@ -30,7 +31,11 @@ export function Nav() {
           >
             Ritual
           </a>
-          <Button asChild size="sm" className="shadow-[0_0_18px_rgba(232,180,74,0.35)]">
+          {/* h-11: tap target 44px di mobile (gate tap-size) */}
+          <Button
+            asChild
+            className="h-11 px-5 shadow-[0_0_18px_rgba(232,180,74,0.35)]"
+          >
             <a href="#summon">Summon the workspace</a>
           </Button>
         </div>

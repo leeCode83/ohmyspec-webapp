@@ -26,7 +26,7 @@ const COLUMNS = [
 export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-[#030609] px-6 pb-10 pt-16 md:px-10">
-      <div className="mx-auto grid w-full max-w-6xl gap-10 md:grid-cols-[2fr_1fr_1fr]">
+      <div className="wrap grid gap-10 md:grid-cols-[2fr_1fr_1fr]">
         <div>
           <p className="font-heading text-xl font-semibold tracking-wide text-foreground">
             Ohmy<span className="text-primary">Spec</span>
@@ -45,9 +45,10 @@ export function Footer() {
             <ul className="mt-4 space-y-3">
               {col.links.map((link) => (
                 <li key={link.label}>
+                  {/* min-h 44px: tap target mobile (gate tap-size) */}
                   <Link
                     href={link.href}
-                    className="text-sm text-foreground/80 transition-colors hover:text-primary"
+                    className="flex min-h-[44px] items-center text-sm text-foreground/80 transition-colors hover:text-primary"
                   >
                     {link.label}
                   </Link>
@@ -58,7 +59,7 @@ export function Footer() {
         ))}
       </div>
 
-      <div className="mx-auto mt-14 flex w-full max-w-6xl flex-col gap-2 border-t border-border/30 pt-6 text-xs text-muted-foreground/70 sm:flex-row sm:items-center sm:justify-between">
+      <div className="wrap mt-14 flex flex-col gap-2 border-t border-border/30 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
           © 2026 OhmySpec — tulis spec-nya, sebelum ia menulis dirinya
           sendiri.

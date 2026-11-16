@@ -43,7 +43,7 @@ export function HeroScene() {
 
       {/* Kuntilanak: materialize pelan, sway, mata crimson menyala sekejap */}
       <div
-        className="absolute bottom-[14%] left-[10%] w-28 opacity-0 md:left-[16%] md:w-40"
+        className="absolute bottom-[14%] left-[10%] w-28 opacity-0 md:left-[16%] md:w-40 max-sm:hidden"
         style={{
           color: "#030a12",
           // Materialize sekali (forwards), lalu sway terus-menerus berjalan paralel

@@ -73,7 +73,7 @@
   --secondary: var(--surface-night);
   --secondary-foreground: var(--parchment);
   --muted: #1a2635;
-  --muted-foreground: #8a94a0;
+  --muted-foreground: #a3b0bd; /* ≥7:1 di atas night & surface (WCAG body text) */
   --accent: var(--surface-night);
   --accent-foreground: var(--parchment);
   --destructive: var(--crimson);
@@ -230,6 +230,19 @@
 }
 
 /* Utility classes animasi */
+
+/* .wrap — container tunggal landing: margin kiri-kanan sama di semua section/nav/footer */
+@utility wrap {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem;
+  padding-inline: 1.5rem;
+}
+@media (min-width: 768px) {
+  .wrap {
+    padding-inline: 2.5rem;
+  }
+}
 @utility animate-fog {
   animation: fog-drift 40s ease-in-out infinite alternate;
 }
