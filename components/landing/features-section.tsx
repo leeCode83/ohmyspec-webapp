@@ -1,5 +1,8 @@
-import { SpecMock } from "@/src/components/landing/spec-mock";
+import { Reveal } from "@/components/landing/reveal";
 import { Section } from "@/components/landing/section";
+import { SpecMock } from "@/src/components/landing/spec-mock";
+
+import type { CSSProperties } from "react";
 
 /**
  * FeaturesSection — split section: mock produk di kiri, daftar fitur di
@@ -28,8 +31,8 @@ const FEATURES = [
 export function FeaturesSection() {
   return (
     <Section tone="surface" className="items-stretch">
-      <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
-        <div className="order-2 lg:order-1">
+      <Reveal className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
+        <div className="reveal-child order-2 lg:order-1">
           <SpecMock />
         </div>
 
@@ -44,7 +47,11 @@ export function FeaturesSection() {
           {/* Daftar fitur bergaris: hirarki lewat nomor, bukan kartu */}
           <ul className="mt-8 divide-y divide-border/40 border-t border-border/40">
             {FEATURES.map((f, i) => (
-              <li key={f.title} className="flex gap-4 py-5">
+              <li
+                key={f.title}
+                className="reveal-child flex gap-4 py-5"
+                style={{ "--reveal-i": i + 1 } as CSSProperties}
+              >
                 <span className="type-ghost w-6 shrink-0 text-sm text-primary/70">
                   0{i + 1}
                 </span>
@@ -60,7 +67,7 @@ export function FeaturesSection() {
             ))}
           </ul>
         </div>
-      </div>
+      </Reveal>
     </Section>
   );
 }

@@ -1,4 +1,7 @@
+import { Reveal } from "@/components/landing/reveal";
 import { Section } from "@/components/landing/section";
+
+import type { CSSProperties } from "react";
 
 /**
  * HowSection — "Ritual": timeline horizontal lamp-lit (bukan stepper kartu).
@@ -27,7 +30,8 @@ const STEPS = [
 export function HowSection() {
   return (
     <Section id="how" className="items-stretch">
-      <div className="mx-auto max-w-3xl text-center">
+      <div aria-hidden className="fog-seam" />
+      <Reveal className="mx-auto max-w-3xl text-center">
         <p className="type-section text-sm uppercase tracking-[0.22em] text-primary/80">
           The ritual
         </p>
@@ -37,7 +41,7 @@ export function HowSection() {
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
           A haunting idea becomes a spec your coding agent can execute.
         </p>
-      </div>
+      </Reveal>
 
       {/* Garis ritual: satu batang emas dengan tiga lampu menyala di atasnya */}
       <div className="relative mt-20">
@@ -45,9 +49,13 @@ export function HowSection() {
           aria-hidden
           className="absolute left-[14%] right-[14%] top-[22px] hidden h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent md:block"
         />
-        <ol className="grid gap-12 md:grid-cols-3 md:gap-8">
-          {STEPS.map((step) => (
-            <li key={step.n} className="relative text-center md:px-4">
+        <Reveal className="grid gap-12 md:grid-cols-3 md:gap-8" stagger={140}>
+          {STEPS.map((step, i) => (
+            <div
+              key={step.n}
+              className="reveal-child relative text-center md:px-4"
+              style={{ "--reveal-i": i } as CSSProperties}
+            >
               {/* Nomor sebagai lampu: ring emas + halo hangat */}
               <div className="relative mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-primary/60 bg-background">
                 <span
@@ -64,9 +72,9 @@ export function HowSection() {
               <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
                 {step.body}
               </p>
-            </li>
+            </div>
           ))}
-        </ol>
+        </Reveal>
       </div>
     </Section>
   );

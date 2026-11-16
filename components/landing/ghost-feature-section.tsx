@@ -1,7 +1,10 @@
 import Image from "next/image";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Reveal } from "@/components/landing/reveal";
 import { Section } from "@/components/landing/section";
+
+import type { CSSProperties } from "react";
 
 /**
  * GhostFeatureSection — pemetaan hantu → fitur MVP (PRD §2).
@@ -79,10 +82,10 @@ export function GhostFeatureSection() {
 
   return (
     <Section id="ghosts" tone="surface" className="items-stretch">
-      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+      <Reveal className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         {/* Kolom kiri: heading + kartu unggulan raksasa */}
         <div className="flex flex-col gap-8">
-          <div>
+          <div className="reveal-child" style={{ "--reveal-i": 0 } as CSSProperties}>
             <p className="type-section text-sm uppercase tracking-[0.22em] text-primary/80">
               The haunts
             </p>
@@ -98,7 +101,10 @@ export function GhostFeatureSection() {
           </div>
 
           {/* Kartu unggulan: siluet setinggi poster, ornamen ring emas */}
-          <Card className="group relative overflow-hidden border-primary/20 bg-[#0d1824]">
+          <Card
+            className="group reveal-child relative overflow-hidden border-primary/20 bg-[#0d1824]"
+            style={{ "--reveal-i": 1 } as CSSProperties}
+          >
             <div
               aria-hidden
               className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(232,180,74,0.16),transparent_60%)]"
@@ -134,10 +140,11 @@ export function GhostFeatureSection() {
 
         {/* Kolom kanan: lima hantu kecil dalam daftar bergaris, bukan grid */}
         <ul className="divide-y divide-border/40 border-y border-border/40">
-          {rest.map((ghost) => (
+          {rest.map((ghost, i) => (
             <li
               key={ghost.name}
-              className="group flex items-center gap-5 py-5 transition-colors hover:bg-primary/[0.04]"
+              className="group reveal-child flex items-center gap-5 py-5 transition-colors hover:bg-primary/[0.04]"
+              style={{ "--reveal-i": i + 1 } as CSSProperties}
             >
               <div className="flex h-20 w-16 shrink-0 items-end justify-center">
                 <Image
@@ -162,7 +169,7 @@ export function GhostFeatureSection() {
             </li>
           ))}
         </ul>
-      </div>
+      </Reveal>
     </Section>
   );
 }

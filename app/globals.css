@@ -229,6 +229,34 @@
   }
 }
 
+/*
+ * Reveal saat masuk viewport (dipicu Reveal.tsx via .is-visible).
+ * Anak memakai .reveal-child + --reveal-i untuk stagger.
+ */
+.reveal-child {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s ease-out;
+  transition-delay: calc(var(--reveal-i, 0) * var(--reveal-stagger, 80ms));
+}
+.reveal.is-visible .reveal-child {
+  opacity: 1;
+  transform: none;
+}
+
+/* Lapisan fog ulang di batas antar-section (hanya bagian atas, memudar) */
+@utility fog-seam {
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 6rem;
+  background: linear-gradient(to bottom, rgba(233, 227, 242, 0.07), transparent);
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+
 /* Utility classes animasi */
 
 /*
