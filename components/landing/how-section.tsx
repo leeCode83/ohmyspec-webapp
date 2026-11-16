@@ -1,9 +1,10 @@
 import { Section } from "@/components/landing/section";
 
 /**
- * HowSection — "Ritual": tiga langkah pakai OhmySpec.
- * Layout sederhana 3 kolom dengan nomor besar bergaya lampu minyak;
- * alur ditandai garis putus-putus antar langkah (grid CSS murni).
+ * HowSection — "Ritual": timeline horizontal lamp-lit (bukan stepper kartu).
+ * Satu batang emas menyambung tiga nomor Romawi yang menyala seperti
+ * lampu minyak. Komposisi sengaja sentris-horizontal agar berbeda dari
+ * dua section lain yang kartu/daftar.
  */
 const STEPS = [
   {
@@ -25,30 +26,48 @@ const STEPS = [
 
 export function HowSection() {
   return (
-    <Section id="how">
-      <h2 className="type-section text-[clamp(2rem,4vw,3.25rem)] text-foreground">
-        The ritual
-      </h2>
-      <p className="mt-4 max-w-2xl text-muted-foreground">
-        Three steps take a haunting idea to a spec your coding agent can
-        execute.
-      </p>
+    <Section id="how" className="items-stretch">
+      <div className="mx-auto max-w-3xl text-center">
+        <p className="type-section text-sm uppercase tracking-[0.22em] text-primary/80">
+          The ritual
+        </p>
+        <h2 className="type-section mt-3 text-[clamp(2rem,4.5vw,3.75rem)] text-foreground">
+          Three steps, one held breath
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+          A haunting idea becomes a spec your coding agent can execute.
+        </p>
+      </div>
 
-      <ol className="mt-12 grid gap-10 md:grid-cols-3 md:gap-6">
-        {STEPS.map((step) => (
-          <li key={step.n} className="relative border-l border-dashed border-border/60 pl-6">
-            <span className="absolute -left-[19px] top-0 flex h-9 w-9 items-center justify-center rounded-full border border-primary/50 bg-background font-heading text-sm text-primary shadow-[0_0_14px_rgba(232,180,74,0.3)]">
-              {step.n}
-            </span>
-            <h3 className="font-heading text-xl font-semibold text-foreground">
-              {step.title}
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {step.body}
-            </p>
-          </li>
-        ))}
-      </ol>
+      {/* Garis ritual: satu batang emas dengan tiga lampu menyala di atasnya */}
+      <div className="relative mt-20">
+        <div
+          aria-hidden
+          className="absolute left-[14%] right-[14%] top-[22px] hidden h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent md:block"
+        />
+        <ol className="grid gap-12 md:grid-cols-3 md:gap-8">
+          {STEPS.map((step) => (
+            <li key={step.n} className="relative text-center md:px-4">
+              {/* Nomor sebagai lampu: ring emas + halo hangat */}
+              <div className="relative mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-primary/60 bg-background">
+                <span
+                  aria-hidden
+                  className="absolute inset-0 rounded-full bg-primary/20 blur-md"
+                />
+                <span className="type-ghost relative text-sm text-primary">
+                  {step.n}
+                </span>
+              </div>
+              <h3 className="type-ghost mt-6 text-xl text-foreground">
+                {step.title}
+              </h3>
+              <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
+                {step.body}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </div>
     </Section>
   );
 }
