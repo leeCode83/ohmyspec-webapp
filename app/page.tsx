@@ -4,6 +4,7 @@ import { GhostFeatureSection } from "@/components/landing/ghost-feature-section"
 import { HowSection } from "@/components/landing/how-section";
 import { FeaturesSection } from "@/components/landing/features-section";
 import { CtaSection } from "@/components/landing/cta-section";
+import { Footer } from "@/components/landing/footer";
 import { GrainOverlay } from "@/components/landing/grain-overlay";
 
 /**
@@ -22,6 +23,7 @@ export default function Home() {
         <CtaSection />
       </main>
       <GrainOverlay />
+      <Footer />
     </>
   );
 }
