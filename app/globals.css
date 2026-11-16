@@ -231,6 +231,34 @@
 
 /* Utility classes animasi */
 
+/*
+ * Tipografi poster: skala bertingkat supaya hero jadi peak dan section
+ * tidak berebut perhatian. Fraunces SOFT/WONK dipakai beda tingkat:
+ * display (judul besar, wonky) vs section (lebih tenang).
+ */
+@utility type-display {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  font-variation-settings: "SOFT" 40, "WONK" 1;
+  text-wrap: balance;
+}
+@utility type-section {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.02;
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+  text-wrap: balance;
+}
+@utility type-ghost {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-variation-settings: "SOFT" 90, "WONK" 1;
+}
+
 /* .wrap — container tunggal landing: margin kiri-kanan sama di semua section/nav/footer */
 @utility wrap {
   margin-inline: auto;

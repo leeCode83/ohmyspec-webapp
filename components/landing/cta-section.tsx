@@ -16,7 +16,7 @@ export function CtaSection() {
       <FogLayers className="opacity-70" />
 
       <div className="relative z-10 mx-auto max-w-2xl">
-        <h2 className="font-heading text-3xl font-semibold leading-tight text-foreground md:text-5xl">
+        <h2 className="type-section text-[clamp(2rem,4vw,3.25rem)] text-foreground">
           Don&apos;t let your specs{" "}
           <span className="text-primary [text-shadow:0_0_24px_rgba(232,180,74,0.4)]">
             haunt the backlog

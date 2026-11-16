@@ -33,7 +33,7 @@ const FEATURES = [
 export function FeaturesSection() {
   return (
     <Section tone="surface">
-      <h2 className="font-heading text-3xl font-semibold text-foreground md:text-5xl">
+      <h2 className="type-section text-[clamp(2rem,4vw,3.25rem)] text-foreground">
         Built for teams who write before they code
       </h2>
       <div className="mt-12 grid gap-6 sm:grid-cols-2">

@@ -30,13 +30,13 @@ export function Hero() {
 
       <div className="relative z-10 flex max-w-3xl flex-col items-center gap-6 [text-shadow:0_1px_10px_rgba(5,10,16,0.9)]">
         <p
-          className="animate-hero-enter text-sm uppercase tracking-[0.35em] text-muted-foreground"
+          className="animate-hero-enter text-xs uppercase tracking-[0.22em] text-muted-foreground"
           style={{ animationDelay: "0.1s" }}
         >
           Spec-driven development, after dark
         </p>
         <h1
-          className="animate-hero-enter font-heading text-5xl font-semibold leading-tight text-foreground md:text-7xl"
+          className="animate-hero-enter type-display text-[clamp(3rem,9vw,7.5rem)] text-foreground"
           style={{ animationDelay: "0.25s" }}
         >
           Every spec deserves{" "}

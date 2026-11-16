@@ -26,7 +26,7 @@ const STEPS = [
 export function HowSection() {
   return (
     <Section id="how">
-      <h2 className="font-heading text-3xl font-semibold text-foreground md:text-5xl">
+      <h2 className="type-section text-[clamp(2rem,4vw,3.25rem)] text-foreground">
         The ritual
       </h2>
       <p className="mt-4 max-w-2xl text-muted-foreground">
