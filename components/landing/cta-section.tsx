@@ -23,8 +23,8 @@ export function CtaSection() {
           </span>
         </h2>
         <p className="mt-4 text-muted-foreground">
-          Give every unfinished spec its closure — author it, refine it, and
-          send it to the agent that will finish the job.
+          Write the spec, let the assistant refine it, and send it to the
+          agent that finishes the job. That is the whole ritual.
         </p>
         <div className="mt-8 flex justify-center">
           <Button
@@ -35,7 +35,7 @@ export function CtaSection() {
           </Button>
         </div>
         <p className="mt-4 text-xs text-muted-foreground">
-          Clone it. Run it. It&apos;s yours. (MIT)
+          Open source under the MIT license. Clone it and run it yourself.
         </p>
       </div>
     </section>

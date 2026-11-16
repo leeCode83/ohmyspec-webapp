@@ -25,7 +25,7 @@ const GHOSTS: Ghost[] = [
   {
     name: "Kuntilanak",
     lore: "The icon. Her laugh warns you before disaster strikes.",
-    feature: "The face of OhmySpec — and the warning before an ambiguous spec ships.",
+    feature: "The face of OhmySpec, and your warning before an ambiguous spec ships.",
     width: 200,
     height: 300,
     src: "/horror/kuntilanak.svg",
@@ -33,7 +33,7 @@ const GHOSTS: Ghost[] = [
   {
     name: "Tuyul",
     lore: "Works quietly for its master. Honestly eats your coins.",
-    feature: "The AI assistant — drafts and edits silently, and eats your BYOK tokens.",
+    feature: "The AI assistant. It drafts and edits in silence, and it eats your BYOK tokens.",
     width: 200,
     height: 260,
     src: "/horror/tuyul.svg",
@@ -41,7 +41,7 @@ const GHOSTS: Ghost[] = [
   {
     name: "Pocong",
     lore: "Bound by an unfulfilled vow, it cannot rest.",
-    feature: "Unfinished and stale specs haunt the workspace. The trash is their graveyard.",
+    feature: "A spec left unfinished haunts the workspace. The trash view is its graveyard.",
     width: 200,
     height: 300,
     src: "/horror/pocong.svg",
@@ -49,7 +49,7 @@ const GHOSTS: Ghost[] = [
   {
     name: "Genderuwo",
     lore: "The heavy laborer of the spirit world.",
-    feature: "Heavy background jobs: imports, conversions, RAG indexing.",
+    feature: "It carries the heavy jobs: imports, file conversions, and RAG indexing.",
     width: 260,
     height: 300,
     src: "/horror/genderuwo.svg",
@@ -57,7 +57,7 @@ const GHOSTS: Ghost[] = [
   {
     name: "Wewe Gombel",
     lore: "She adopts the children nobody cares for.",
-    feature: "Neglected documents, taken under her wing until someone claims them.",
+    feature: "Neglected documents end up under her wing until someone claims them.",
     width: 220,
     height: 300,
     src: "/horror/wewe-gombel.svg",
@@ -65,7 +65,7 @@ const GHOSTS: Ghost[] = [
   {
     name: "Leak",
     lore: "A flying head, its entrails trailing behind.",
-    feature: "Export prompt — the spec (head) flies to your coding agent, context (entrails) trailing.",
+    feature: "Export prompt: the spec (the head) flies to your coding agent with its context (the entrails) trailing behind.",
     width: 300,
     height: 260,
     src: "/horror/leak.svg",
@@ -79,8 +79,8 @@ export function GhostFeatureSection() {
         Six haunts, six features
       </h2>
       <p className="mt-4 max-w-2xl text-muted-foreground">
-        Indonesian urban legends run through every corner of OhmySpec. Each
-        ghost has a job — exactly like each feature of the product.
+        Every feature in OhmySpec has a ghost from Indonesian folklore behind
+        it. Each one has a job, and so does each feature.
       </p>
 
       <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -32,7 +32,7 @@ export function Footer() {
             Ohmy<span className="text-primary">Spec</span>
           </p>
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-            Author, refine, and dispatch specs — before they come back for
+            Author, refine, and dispatch specs before they come back for
             you.
           </p>
         </div>
@@ -61,7 +61,7 @@ export function Footer() {
 
       <div className="wrap mt-14 flex flex-col gap-2 border-t border-border/30 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © 2026 OhmySpec — tulis spec-nya, sebelum ia menulis dirinya
+          © 2026 OhmySpec, tulis spec-nya sebelum ia menulis dirinya
           sendiri.
         </p>
         {/* Credit font (satu baris, sesuai aturan kredit) */}

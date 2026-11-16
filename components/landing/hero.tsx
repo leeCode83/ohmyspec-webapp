@@ -48,8 +48,8 @@ export function Hero() {
           className="animate-hero-enter max-w-xl text-lg text-muted-foreground"
           style={{ animationDelay: "0.4s" }}
         >
-          OhmySpec is where small teams author, refine, and dispatch specs —
-          with an AI assistant that haunts the unfinished ones. Leave a spec
+          OhmySpec is where small teams author, refine, and dispatch specs.
+          An AI assistant haunts the unfinished ones. Leave a spec
           incomplete, and it comes back.
         </p>
         <div
@@ -62,15 +62,16 @@ export function Hero() {
           >
             Summon the workspace
           </Button>
-          <Button size="lg" variant="outline" className="h-12 px-6">
-            Read the lore
+          <Button asChild size="lg" variant="outline" className="h-12 px-6">
+            <a href="#ghosts">Meet the ghosts</a>
           </Button>
         </div>
         <p
           className="animate-hero-enter mt-4 text-xs text-muted-foreground"
           style={{ animationDelay: "0.7s" }}
         >
-          Free and open source · Bring your own key · Self-hostable
+          Free and open source (MIT) · Bring your own key · Self-hosted in
+          one docker compose up
         </p>
       </div>
     </section>

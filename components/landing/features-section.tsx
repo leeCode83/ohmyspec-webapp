@@ -9,23 +9,23 @@ import { Section } from "@/components/landing/section";
  */
 const FEATURES = [
   {
-    title: "Workspace built for 5–10",
-    body: "Owner and member roles, invite links, and a flat document list with search and filters. No ceremony — just the team and its specs.",
+    title: "A workspace for 5 to 10 people",
+    body: "Owner and member roles, invite links, and a flat document list with search and filters. The whole team and its specs, nothing else.",
     tag: "Collaboration",
   },
   {
-    title: "Editor that remembers",
-    body: "TipTap markdown with Mermaid diagrams rendered inline, autosave every second, and a soft lock so edits never collide.",
+    title: "An editor that never drops a draft",
+    body: "TipTap markdown renders Mermaid diagrams inline, autosave runs every second, and a soft lock keeps edits from colliding.",
     tag: "Editor",
   },
   {
-    title: "The workspace knows its own lore",
-    body: "Every document is chunked and embedded. Ask what you decided in another spec — the assistant retrieves it from workspace knowledge.",
+    title: "Ask your workspace what it decided",
+    body: "Every document is chunked and embedded. Ask what you decided in another spec, and the assistant retrieves it from workspace knowledge.",
     tag: "RAG",
   },
   {
     title: "Bring your own key",
-    body: "OpenAI, Anthropic, Gemini, or OpenRouter — your keys, encrypted server-side. Embeddings run locally in your browser, no key needed.",
+    body: "Your OpenAI, Anthropic, Gemini, or OpenRouter key stays encrypted server-side. Embeddings run locally in your browser and need no key.",
     tag: "AI",
   },
 ] as const;

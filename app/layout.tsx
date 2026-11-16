@@ -20,11 +20,11 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "OhmySpec — Every spec deserves closure",
+  title: "OhmySpec: Every spec deserves closure",
   description:
-    "Author, refine, and dispatch specs with an AI assistant. Unfinished specs come back to haunt your team — give them closure with OhmySpec.",
+    "Author, refine, and dispatch specs with an AI assistant. Unfinished specs come back to haunt your team, so give them closure with OhmySpec.",
   openGraph: {
-    title: "OhmySpec — Every spec deserves closure",
+    title: "OhmySpec: Every spec deserves closure",
     description:
       "Spec-driven development for small teams. Every spec is a soul that deserves closure.",
     type: "website",
