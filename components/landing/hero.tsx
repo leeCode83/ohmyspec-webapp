@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { FogLayers } from "@/components/landing/fog-layers";
+import { HeroScene } from "@/components/landing/hero-scene";
 
 /**
  * Hero — layar pertama: judul besar + CTA di atas komposisi malam
@@ -25,6 +26,7 @@ export function Hero() {
         className="pointer-events-none absolute bottom-0 left-1/2 w-[130%] max-w-none -translate-x-1/2 text-[#040a12] opacity-90 md:w-[110%]"
       />
       <FogLayers />
+      <HeroScene />
 
       <div className="relative z-10 flex max-w-3xl flex-col items-center gap-6">
         <p
