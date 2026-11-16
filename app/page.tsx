@@ -1,5 +1,6 @@
 import { Nav } from "@/components/landing/nav";
 import { Hero } from "@/components/landing/hero";
+import { ToolSection } from "@/components/landing/tool-section";
 import { Footer } from "@/components/landing/footer";
 
 /**
@@ -12,6 +13,7 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <ToolSection />
       </main>
       <Footer />
     </>

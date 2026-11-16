@@ -13,9 +13,9 @@ export function Hero() {
   return (
     <section
       id="start"
-      className="relative flex min-h-[calc(100svh-4rem)] items-center py-16 md:py-20"
+      className="relative flex min-h-[calc(100svh-64px)] items-center py-10 md:py-12"
     >
-      <div className="wrap grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
+      <div className="wrap grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
         <div className="max-w-xl">
           <p
             className="animate-sheet-in type-label flex items-center gap-3 text-primary"
@@ -49,7 +49,7 @@ export function Hero() {
             .
           </h1>
           <p
-            className="animate-sheet-in mt-6 text-lg leading-relaxed text-muted-foreground"
+            className="animate-sheet-in mt-5 text-[17px] leading-relaxed text-muted-foreground"
             style={{ animationDelay: "0.25s" }}
           >
             OhmySpec gives small teams one drawing table for the spec: author
@@ -57,7 +57,7 @@ export function Hero() {
             it to your coding agent with its context attached.
           </p>
           <div
-            className="animate-sheet-in mt-8 flex flex-col gap-3 sm:flex-row"
+            className="animate-sheet-in mt-7 flex flex-col gap-3 sm:flex-row"
             style={{ animationDelay: "0.35s" }}
           >
             <Button
@@ -67,12 +67,6 @@ export function Hero() {
               <a href="#start">Start a project</a>
             </Button>
           </div>
-          <p
-            className="animate-sheet-in type-label mt-8 text-muted-foreground"
-            style={{ animationDelay: "0.45s" }}
-          >
-            MIT licensed · Bring your own key · One docker compose up
-          </p>
         </div>
 
         {/* Drawing frame: garis cobalt ganda ala template gambar teknik */}

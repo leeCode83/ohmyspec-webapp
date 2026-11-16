@@ -23,7 +23,7 @@ export function Section({
     <section
       id={id}
       className={cn(
-        "relative flex min-h-[calc(100svh-4rem)] w-full items-center py-24 md:py-32",
+        "relative flex min-h-[calc(100svh-64px)] w-full items-start pt-12 pb-16 md:pt-16 md:pb-20",
         tone === "panel" && "bg-card",
         className,
       )}
