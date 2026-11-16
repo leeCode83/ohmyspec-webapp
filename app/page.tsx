@@ -1,5 +1,6 @@
 import { Nav } from "@/components/landing/nav";
 import { Hero } from "@/components/landing/hero";
+import { GhostFeatureSection } from "@/components/landing/ghost-feature-section";
 import { GrainOverlay } from "@/components/landing/grain-overlay";
 
 /**
@@ -12,6 +13,7 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <GhostFeatureSection />
       </main>
       <GrainOverlay />
     </>
