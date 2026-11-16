@@ -2,7 +2,6 @@ import Image from "next/image";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Section } from "@/components/landing/section";
-import { cn } from "@/lib/utils";
 
 /**
  * GhostFeatureSection — pemetaan hantu → fitur MVP (PRD §2).
@@ -73,53 +72,96 @@ const GHOSTS: Ghost[] = [
 ];
 
 export function GhostFeatureSection() {
-  return (
-    <Section id="ghosts" tone="surface">
-      <h2 className="type-section text-[clamp(2rem,4vw,3.25rem)] text-foreground">
-        Six haunts, six features
-      </h2>
-      <p className="mt-4 max-w-2xl text-muted-foreground">
-        Every feature in OhmySpec has a ghost from Indonesian folklore behind
-        it. Each one has a job, and so does each feature.
-      </p>
+  // Spread asimetris: Kuntilanak (maskot) jadi kartu unggulan besar,
+  // lima sisanya kartu kecil. Komposisi sengaja berbeda dari grid seragam
+  // section lain (temuan critique: "satu template diulang 3x").
+  const [lead, ...rest] = GHOSTS;
 
-      <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {GHOSTS.map((ghost) => (
-          <Card
-            key={ghost.name}
-            className="group overflow-hidden border-border/50 bg-background/40 transition-transform duration-200 hover:-translate-y-0.5 hover:border-primary/40"
-          >
-            <CardContent className="flex h-full flex-col gap-4 p-6">
-              {/* Siluet: menggelap saat idle, menyala saat hover */}
-              <div className="flex h-36 items-center justify-center overflow-hidden">
+  return (
+    <Section id="ghosts" tone="surface" className="items-stretch">
+      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        {/* Kolom kiri: heading + kartu unggulan raksasa */}
+        <div className="flex flex-col gap-8">
+          <div>
+            <p className="type-section text-sm uppercase tracking-[0.22em] text-primary/80">
+              The haunts
+            </p>
+            <h2 className="type-section mt-3 text-[clamp(2rem,4.5vw,3.75rem)] text-foreground">
+              Six haunts,
+              <br />
+              six features
+            </h2>
+            <p className="mt-4 max-w-md text-muted-foreground">
+              Every feature in OhmySpec has a ghost from Indonesian folklore
+              behind it. Each one has a job, and so does each feature.
+            </p>
+          </div>
+
+          {/* Kartu unggulan: siluet setinggi poster, ornamen ring emas */}
+          <Card className="group relative overflow-hidden border-primary/20 bg-[#0d1824]">
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(232,180,74,0.16),transparent_60%)]"
+            />
+            <CardContent className="relative grid gap-6 p-6 sm:grid-cols-[auto_1fr] sm:items-end">
+              <div className="relative flex h-56 items-end justify-center">
+                <Image
+                  src={lead.src}
+                  alt=""
+                  width={lead.width}
+                  height={lead.height}
+                  className="h-full w-auto object-contain text-[#cfd8e3] transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+                <span className="absolute -bottom-1 left-1/2 h-px w-24 -translate-x-1/2 bg-primary/50" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.22em] text-primary">
+                  The face of OhmySpec
+                </p>
+                <h3 className="type-ghost mt-2 text-3xl text-foreground">
+                  {lead.name}
+                </h3>
+                <p className="mt-1 text-sm italic text-muted-foreground">
+                  {lead.lore}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-foreground/90">
+                  {lead.feature}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Kolom kanan: lima hantu kecil dalam daftar bergaris, bukan grid */}
+        <ul className="divide-y divide-border/40 border-y border-border/40">
+          {rest.map((ghost) => (
+            <li
+              key={ghost.name}
+              className="group flex items-center gap-5 py-5 transition-colors hover:bg-primary/[0.04]"
+            >
+              <div className="flex h-20 w-16 shrink-0 items-end justify-center">
                 <Image
                   src={ghost.src}
                   alt=""
                   width={ghost.width}
                   height={ghost.height}
-                  className={cn(
-                    "max-h-36 w-auto object-contain text-[#1d2c3d] transition-all duration-300",
-                    "group-hover:scale-[1.03] group-hover:brightness-[2.2]",
-                  )}
-                  style={{
-                    filter: "invert(1) opacity(0.35)",
-                  }}
+                  className="max-h-20 w-auto object-contain text-[#9fb0c2] transition-transform duration-300 group-hover:-translate-y-1"
                 />
               </div>
-              <div>
-                <h3 className="font-heading text-xl font-semibold text-foreground">
+              <div className="min-w-0">
+                <h3 className="type-ghost text-lg text-foreground">
                   {ghost.name}
                 </h3>
-                <p className="mt-1 text-sm italic text-muted-foreground">
+                <p className="text-xs italic text-muted-foreground">
                   {ghost.lore}
                 </p>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/90">
+                <p className="mt-1 text-sm leading-relaxed text-foreground/85">
                   {ghost.feature}
                 </p>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            </li>
+          ))}
+        </ul>
       </div>
     </Section>
   );
