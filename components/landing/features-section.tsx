@@ -1,63 +1,65 @@
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { SpecMock } from "@/components/landing/spec-mock";
 import { Section } from "@/components/landing/section";
 
 /**
- * FeaturesSection — grid fitur MVP sekunder (yang belum diangkat oleh
- * kartu hantu): workspace & editor, RAG knowledge, BYOK, export 5 format.
- * Satu array data, satu gaya kartu (DRY).
+ * FeaturesSection — split section: mock produk di kiri, daftar fitur di
+ * kanan. Menutup temuan "klaim tanpa visual produk": pengunjung melihat
+ * editor, diff preview, dan knowledge panel sebelum daftar fitur.
  */
 const FEATURES = [
   {
     title: "A workspace for 5 to 10 people",
-    body: "Owner and member roles, invite links, and a flat document list with search and filters. The whole team and its specs, nothing else.",
-    tag: "Collaboration",
+    body: "Owner and member roles, invite links, and a flat document list with search and filters.",
   },
   {
     title: "An editor that never drops a draft",
-    body: "TipTap markdown renders Mermaid diagrams inline, autosave runs every second, and a soft lock keeps edits from colliding.",
-    tag: "Editor",
+    body: "TipTap markdown renders Mermaid diagrams inline and autosaves every second.",
   },
   {
     title: "Ask your workspace what it decided",
-    body: "Every document is chunked and embedded. Ask what you decided in another spec, and the assistant retrieves it from workspace knowledge.",
-    tag: "RAG",
+    body: "Every document is chunked and embedded, so the assistant can quote another spec.",
   },
   {
     title: "Bring your own key",
-    body: "Your OpenAI, Anthropic, Gemini, or OpenRouter key stays encrypted server-side. Embeddings run locally in your browser and need no key.",
-    tag: "AI",
+    body: "Your OpenAI, Anthropic, Gemini, or OpenRouter key stays encrypted server-side.",
   },
 ] as const;
 
 export function FeaturesSection() {
   return (
-    <Section tone="surface">
-      <h2 className="type-section text-[clamp(2rem,4vw,3.25rem)] text-foreground">
-        Built for teams who write before they code
-      </h2>
-      <div className="mt-12 grid gap-6 sm:grid-cols-2">
-        {FEATURES.map((f) => (
-          <Card
-            key={f.title}
-            className="border-border/50 bg-background/40 transition-colors hover:border-primary/40"
-          >
-            <CardContent className="flex h-full flex-col gap-3 p-6">
-              <Badge
-                variant="outline"
-                className="w-fit border-primary/40 text-primary"
-              >
-                {f.tag}
-              </Badge>
-              <h3 className="font-heading text-lg font-semibold text-foreground">
-                {f.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {f.body}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+    <Section tone="surface" className="items-stretch">
+      <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
+        <div className="order-2 lg:order-1">
+          <SpecMock />
+        </div>
+
+        <div className="order-1 lg:order-2">
+          <p className="type-section text-sm uppercase tracking-[0.22em] text-primary/80">
+            Inside the workspace
+          </p>
+          <h2 className="type-section mt-3 text-[clamp(2rem,4vw,3.25rem)] text-foreground">
+            Built for teams who write before they code
+          </h2>
+
+          {/* Daftar fitur bergaris: hirarki lewat nomor, bukan kartu */}
+          <ul className="mt-8 divide-y divide-border/40 border-t border-border/40">
+            {FEATURES.map((f, i) => (
+              <li key={f.title} className="flex gap-4 py-5">
+                <span className="type-ghost w-6 shrink-0 text-sm text-primary/70">
+                  0{i + 1}
+                </span>
+                <div>
+                  <h3 className="type-ghost text-base text-foreground">
+                    {f.title}
+                  </h3>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    {f.body}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </Section>
   );
