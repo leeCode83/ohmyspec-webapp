@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { IsoBuild } from "@/components/landing/iso-build";
+import { PlotterArt } from "@/components/figures/plotter/art";
 
 /**
  * Hero — layar pertama: lembar gambar A-101.
@@ -88,7 +88,7 @@ export function Hero() {
             />
           ))}
           <div className="border border-primary/25 bg-[var(--sheet)]/70 p-3 md:p-4">
-            <IsoBuild />
+          <PlotterArt />
           </div>
           {/* Title block: strip bawah berbagi garis seperti lembar gambar asli */}
           <figcaption className="mt-2 grid grid-cols-4 divide-x divide-primary/30 border border-primary/30 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">

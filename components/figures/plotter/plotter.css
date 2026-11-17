@@ -1,0 +1,73 @@
+/*
+ * plotter.css — scoped tokens and styles for the flatbed plotter figure.
+ * Applies inside .pt wrapper; does NOT touch :root or .iso tokens.
+ */
+
+/* ── Light theme override: map anatomy tokens to blueprint palette ─────────── */
+.iso.pt-light {
+  --anatomy-page: var(--sheet, #eef0f3);
+  --anatomy-card: var(--sheet-sunk, #e2e5ea);
+  --anatomy-paper: var(--sheet, #eef0f3);
+  --anatomy-face: #f8f8f6;
+  --anatomy-top: #ffffff;
+
+  /* Four shading tones mapped to cool-grey blueprint shades */
+  --anatomy-shade-0: #c8cdd6;
+  --anatomy-shade-1: #d4d9e2;
+  --anatomy-shade-2: #dfe3ea;
+  --anatomy-shade-3: #eaecf0;
+
+  --anatomy-lit-top: #ffffff;
+  --anatomy-lit-shade: #e0e4ec;
+
+  /* Ink tones */
+  --anatomy-hi:    #0b0c0e;   /* graphite */
+  --anatomy-mid:   #4a5060;
+  --anatomy-lo:    #8a92a0;
+  --anatomy-faint: #c0c6d0;
+  --anatomy-lit:   #0b0c0e;   /* used for lit accent outline */
+
+  /* Halo */
+  --anatomy-halo: #8a9aaa;
+  --anatomy-halo-opacity: 0.28;
+  --anatomy-dot: #2a3040;
+
+  /* Line weight — slightly heavier for readability on light bg */
+  --anatomy-weight: 0.7px;
+}
+
+/* ── Pen tip: hard-hat yellow accent ──────────────────────────────────────── */
+.pt-pen-tip > .iso-fill {
+  fill: var(--hard-hat, #e8a33d) !important;
+}
+.pt-pen-tip > .iso-shade {
+  fill: color-mix(in srgb, var(--hard-hat, #e8a33d) 60%, #000) !important;
+}
+.pt-pen-tip > .iso-top {
+  fill: color-mix(in srgb, var(--hard-hat, #e8a33d) 80%, #fff) !important;
+}
+
+/* ── Paper grid lines: very faint ──────────────────────────────────────────── */
+.pt-paper-grid {
+  stroke: var(--cobalt, #1f2de6);
+  stroke-opacity: 0.1;
+}
+
+/* ── Drawn strokes on paper: cobalt ink ───────────────────────────────────── */
+.pt-stroke {
+  fill: none;
+  stroke: var(--cobalt, #1f2de6);
+  stroke-opacity: 0.55;
+  stroke-width: 0.9px;
+  stroke-linecap: round;
+}
+
+/* ── Focus ring ──────────────────────────────────────────────────────────────*/
+.pt-stage:focus-visible {
+  outline: 1.5px solid var(--cobalt, #1f2de6);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.pt-stage:focus:not(:focus-visible) {
+  outline: none;
+}
