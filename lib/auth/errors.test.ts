@@ -24,6 +24,17 @@ describe("toUserMessage", () => {
     );
   });
 
+  it("maps CHECK violations by SQLSTATE to the friendly message", () => {
+    // Raw Postgres check_violation messages are neither stable nor
+    // user-facing; the workspace CRUD spec (2026-11-21) §3 maps 23514.
+    expect(
+      toUserMessage({
+        code: "23514",
+        message: 'new row for relation "workspaces" violates check constraint "workspace_name_valid"',
+      }),
+    ).toBe("Workspace name must be 1-60 characters");
+  });
+
   it("hides unexpected errors behind the generic message", () => {
     expect(toUserMessage({ message: "relation \"x\" does not exist" })).toBe("Something went wrong");
     expect(toUserMessage({ message: "" })).toBe("Something went wrong");
