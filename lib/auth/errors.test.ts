@@ -35,6 +35,30 @@ describe("toUserMessage", () => {
     ).toBe("Workspace name must be 1-60 characters");
   });
 
+  it("maps the document title CHECK violation by constraint name", () => {
+    // Document CRUD spec (2026-11-21) §7 row 1: once documents share
+    // SQLSTATE 23514 with workspaces, the constraint name inside the raw
+    // message disambiguates.
+    expect(
+      toUserMessage({
+        code: "23514",
+        message: 'new row for relation "documents" violates check constraint "documents_title_valid"',
+      }),
+    ).toBe("Document title must be 1-60 characters");
+  });
+
+  it("hides unmappable CHECK violations behind the generic message", () => {
+    // Document CRUD spec (2026-11-21) §7 row 2: other constraint
+    // violations are dev bugs — generic message, technical details shown.
+    expect(
+      toUserMessage({
+        code: "23514",
+        message:
+          'new row for relation "documents" violates check constraint "documents_source_consistent"',
+      }),
+    ).toBe("Something went wrong");
+  });
+
   it("hides unexpected errors behind the generic message", () => {
     expect(toUserMessage({ message: "relation \"x\" does not exist" })).toBe("Something went wrong");
     expect(toUserMessage({ message: "" })).toBe("Something went wrong");

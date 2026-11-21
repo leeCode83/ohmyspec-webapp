@@ -18,12 +18,16 @@ const KNOWN_DB_MESSAGES = [
 ] as const;
 
 // CHECK violations (SQLSTATE 23514) carry raw Postgres messages that are
-// neither stable nor user-facing, so they map by code. Today only the
-// workspace_name_valid constraint is reachable from client writes; add
-// per-constraint entries if another constraint ever surfaces to a user
-// action (workspace CRUD spec 2026-11-21 §3).
-const SQLSTATE_MESSAGES: Record<string, string> = {
-  "23514": "Workspace name must be 1-60 characters",
+// neither stable nor user-facing. Multiple 23514 constraints are now
+// reachable from client writes (workspace rename AND document
+// title/shape guards), so the map keys on the constraint name inside the
+// raw message (document CRUD spec 2026-11-21 §7), not on the SQLSTATE
+// alone. Only UI-mappable constraints get an entry; anything else falls
+// through to the generic message — a dev bug that the technical-details
+// block should expose truthfully (spec §7 row 2).
+const CONSTRAINT_MESSAGES: Record<string, string> = {
+  workspace_name_valid: "Workspace name must be 1-60 characters",
+  documents_title_valid: "Document title must be 1-60 characters",
 };
 
 export const GENERIC_ERROR_MESSAGE = "Something went wrong";
@@ -35,9 +39,15 @@ export const GENERIC_ERROR_MESSAGE = "Something went wrong";
 export function toUserMessage(
   error: { message?: string; code?: string } | null | undefined,
 ): string {
-  const codeMessage = error?.code ? SQLSTATE_MESSAGES[error.code] : undefined;
-  if (codeMessage) {
-    return codeMessage;
+  if (error?.code === "23514") {
+    const rawMessage = error.message ?? "";
+    for (const [constraint, text] of Object.entries(CONSTRAINT_MESSAGES)) {
+      if (rawMessage.includes(constraint)) {
+        return text;
+      }
+    }
+    // Unmapped CHECK violation (spec §7 row 2): fall through to the
+    // generic message instead of guessing a feature message.
   }
   const message = error?.message ?? "";
   if ((KNOWN_DB_MESSAGES as readonly string[]).includes(message)) {
