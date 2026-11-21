@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CreateWorkspaceDialog } from "@/components/dashboard/create-workspace-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { WorkspaceSummary } from "@/lib/workspaces/queries";
@@ -11,6 +12,9 @@ import type { WorkspaceSummary } from "@/lib/workspaces/queries";
 export function DashboardView({ workspaces }: { workspaces: WorkspaceSummary[] }) {
   return (
     <div>
+      <div className="mb-6 flex justify-end">
+        <CreateWorkspaceDialog />
+      </div>
       {workspaces.length === 0 ? (
         <p className="text-muted-foreground">No workspaces yet.</p>
       ) : (
