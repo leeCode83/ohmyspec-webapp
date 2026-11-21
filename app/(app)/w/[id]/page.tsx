@@ -1,13 +1,17 @@
 import { notFound } from "next/navigation";
 import { MemberList, type MemberRow } from "@/components/workspace/member-list";
 import { InvitePanel } from "@/components/workspace/invite-panel";
+import {
+  LeaveWorkspaceButton,
+  RemoveMemberButton,
+} from "@/components/workspace/workspace-mutations";
 import { createClient } from "@/lib/supabase/server";
 
 /**
  * Workspace page, M1 shape (spec §2.7): header with name, members list,
- * and — mounted by later tasks — the owner invite panel, mutation actions,
- * and danger zone. Every read is RLS-scoped; a workspace the caller cannot
- * see returns no row → 404. Explicit columns only (audit F1).
+ * the owner invite panel, mutation actions per role, and — mounted by a
+ * later task — the danger zone. Every read is RLS-scoped; a workspace the
+ * caller cannot see returns no row → 404. Explicit columns only (audit F1).
  */
 export default async function WorkspacePage({
   params,
@@ -55,7 +59,22 @@ export default async function WorkspacePage({
       <header>
         <h1 className="font-heading text-2xl font-bold">{workspace.name}</h1>
       </header>
-      <MemberList members={rows} />
+      <MemberList
+        members={rows}
+        actions={
+          isOwner
+            ? (member) =>
+                member.role !== "owner" ? (
+                  <RemoveMemberButton
+                    workspaceId={workspace.id}
+                    userId={member.userId}
+                    memberName={member.name}
+                  />
+                ) : undefined
+            : undefined
+        }
+      />
+      {!isOwner && <LeaveWorkspaceButton workspaceId={workspace.id} />}
       {isOwner && <InvitePanel workspaceId={workspace.id} />}
     </main>
   );
