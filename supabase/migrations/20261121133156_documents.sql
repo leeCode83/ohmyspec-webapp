@@ -97,3 +97,30 @@ grant insert (workspace_id, title, type, source, file_type, storage_path, conten
 revoke update on public.documents from authenticated;
 grant update (title, content_md, locked_by, locked_at, deleted_at)
   on public.documents to authenticated;
+
+-- §4 — Version-bump trigger. The server owns the "every content change
+-- bumps the version" invariant; clients cannot bypass it. updated_at
+-- bumps on any title/content_md/deleted_at write (rename touches it too);
+-- version + updated_by bump ONLY when content_md actually changes.
+-- Heartbeat (locked_at) and release (locked_by, locked_at) statements
+-- name none of the OF columns, so lock traffic never churns updated_at.
+-- Runs as invoker (not security definer) — it only stamps NEW values —
+-- and raises nothing: no exception paths.
+create or replace function public.documents_touch()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  new.updated_at := now();
+  if new.content_md is distinct from old.content_md then
+    new.version := old.version + 1;
+    new.updated_by := auth.uid();
+  end if;
+  return new;
+end;
+$$;
+
+create trigger documents_touch
+  before update of title, content_md, deleted_at on public.documents
+  for each row execute function public.documents_touch();

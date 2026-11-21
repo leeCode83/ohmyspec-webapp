@@ -11,9 +11,12 @@
 --   17-26 RLS (spec §8 group 3): trash visibility, non-member denial,
 --         soft-deleted-workspace invisibility, CRUD ok/denied pairs,
 --         non-granted column denial
+--   27-35 trigger (spec §8 group 2) + conditional autosave (group 5):
+--         version/updated_by/updated_at bumps, no-bump cases, stale
+--         version / wrong holder / trashed row save denials
 begin;
 \ir helpers.pgsql
-select plan(26);
+select plan(40);
 
 insert into auth.users (id, email, encrypted_password) values
   ('11111111-1111-1111-1111-111111111111', 'owner-a@test.dev', crypt('Str0ng!Pass', gen_salt('bf'))),
@@ -262,6 +265,169 @@ select is(
     where id = 'c0000000-0000-0000-0000-000000000002'),
   1::bigint,
   'non-member delete silently ignored'
+);
+
+-- ── Grup 2: Trigger ─────────────────────────────────────────────────
+
+-- 'Touch me': updated_at backdated to a constant so every bump is
+-- detectable. Backdating is a superuser statement naming only updated_at
+-- — not an OF column of the trigger, so it cannot fire it itself.
+reset role;
+insert into public.documents (id, workspace_id, title, type, source, content_md)
+values ('c0000000-0000-0000-0000-000000000005', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Touch me', 'spec', 'native', 'v1');
+update public.documents set updated_at = '2000-01-01 00:00:00+00'::timestamptz
+where title = 'Touch me';
+
+-- 27a-27c: content change bumps version, updated_by, updated_at.
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+set local role authenticated;
+update public.documents set content_md = 'v2' where title = 'Touch me';
+select is(
+  (select version from public.documents where title = 'Touch me'),
+  2,
+  'content change bumps version'
+);
+select is(
+  (select updated_by from public.documents where title = 'Touch me'),
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'content change sets updated_by'
+);
+select ok(
+  (select updated_at > '2000-01-01 00:00:00+00'::timestamptz
+    from public.documents where title = 'Touch me'),
+  'content change bumps updated_at'
+);
+
+-- 28a-28b: title-only rename bumps updated_at, never version.
+reset role;
+update public.documents set updated_at = '2000-01-01 00:00:00+00'::timestamptz
+where title = 'Touch me';
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+set local role authenticated;
+update public.documents set title = 'Renamed' where title = 'Touch me';
+select is(
+  (select version from public.documents where title = 'Renamed'),
+  2,
+  'rename does not bump version'
+);
+select ok(
+  (select updated_at > '2000-01-01 00:00:00+00'::timestamptz
+    from public.documents where title = 'Renamed'),
+  'rename bumps updated_at'
+);
+
+-- 29a-29b: heartbeat-style locked_at update bumps neither.
+reset role;
+update public.documents set updated_at = '2000-01-01 00:00:00+00'::timestamptz
+where title = 'Renamed';
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+set local role authenticated;
+update public.documents set locked_at = now() where title = 'Renamed';
+select ok(
+  (select updated_at = '2000-01-01 00:00:00+00'::timestamptz
+    from public.documents where title = 'Renamed'),
+  'heartbeat does not bump updated_at'
+);
+select is(
+  (select version from public.documents where title = 'Renamed'),
+  2,
+  'heartbeat does not bump version'
+);
+
+-- 30a-30b: soft delete bumps updated_at, not version.
+reset role;
+update public.documents set updated_at = '2000-01-01 00:00:00+00'::timestamptz
+where title = 'Renamed';
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+set local role authenticated;
+update public.documents set deleted_at = now() where title = 'Renamed';
+select is(
+  (select version from public.documents where title = 'Renamed'),
+  2,
+  'soft delete does not bump version'
+);
+select ok(
+  (select updated_at > '2000-01-01 00:00:00+00'::timestamptz
+    from public.documents where title = 'Renamed'),
+  'soft delete bumps updated_at'
+);
+
+-- ── Grup 5: Conditional autosave (SQL level) ────────────────────────
+
+-- 'Save me': lock held by B, version 1. The autosave filter mirrors the
+-- client contract (spec §6): .eq version, .eq locked_by, .is deleted_at.
+reset role;
+insert into public.documents (id, workspace_id, title, type, source, content_md)
+values ('c0000000-0000-0000-0000-000000000006', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Save me', 'plan', 'native', 'draft');
+update public.documents
+set locked_by = '22222222-2222-2222-2222-222222222222'::uuid, locked_at = now()
+where title = 'Save me';
+
+-- 31a-31b: matching version + lock holder saves; trigger bumps version.
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+set local role authenticated;
+update public.documents
+set content_md = 'saved'
+where title = 'Save me'
+  and version = 1
+  and locked_by = auth.uid()
+  and deleted_at is null;
+select is(
+  (select content_md from public.documents where title = 'Save me'),
+  'saved',
+  'autosave with matching version and lock saves'
+);
+select is(
+  (select version from public.documents where title = 'Save me'),
+  2,
+  'autosave bumps version'
+);
+
+-- 32: stale version matches 0 rows — row unchanged.
+update public.documents
+set content_md = 'stale'
+where title = 'Save me'
+  and version = 1
+  and locked_by = auth.uid()
+  and deleted_at is null;
+select is(
+  (select content_md from public.documents where title = 'Save me'),
+  'saved',
+  'stale version autosave matches 0 rows'
+);
+
+-- 33: wrong lock holder (owner A is a member, but not the lock holder)
+-- matches 0 rows.
+select tests.authenticate_as('11111111-1111-1111-1111-111111111111');
+update public.documents
+set content_md = 'hijack'
+where title = 'Save me'
+  and version = 2
+  and locked_by = auth.uid()
+  and deleted_at is null;
+select is(
+  (select content_md from public.documents where title = 'Save me'),
+  'saved',
+  'wrong lock holder autosave matches 0 rows'
+);
+
+-- 34: autosave against a soft-deleted document matches 0 rows — no
+-- writing into a trashed row (soft delete is allowed while locked; the
+-- holder's next save/heartbeat filters deleted_at).
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+update public.documents set deleted_at = now() where title = 'Save me';
+update public.documents
+set content_md = 'write into trash'
+where title = 'Save me'
+  and version = 2
+  and locked_by = auth.uid()
+  and deleted_at is null;
+select is(
+  (select content_md from public.documents where title = 'Save me'),
+  'saved',
+  'autosave against soft-deleted document matches 0 rows'
 );
 
 select * from finish();
