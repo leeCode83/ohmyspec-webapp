@@ -18,6 +18,10 @@ describe("safeNextPath", () => {
     expect(safeNextPath("//evil.example")).toBeNull();
   });
 
+  it("rejects a backslash-slash protocol-relative variant", () => {
+    expect(safeNextPath("/\\evil.example")).toBeNull();
+  });
+
   it("rejects garbage and empty values", () => {
     expect(safeNextPath("nope")).toBeNull();
     expect(safeNextPath("")).toBeNull();

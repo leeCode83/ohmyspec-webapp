@@ -11,7 +11,14 @@
  */
 export function safeNextPath(raw: string | string[] | undefined): string | null {
   const value = Array.isArray(raw) ? raw[0] : raw;
-  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+  if (
+    !value ||
+    !value.startsWith("/") ||
+    value.startsWith("//") ||
+    // WHATWG URL parsing normalizes "\" to "/" for special schemes, so a
+    // leading "/\evil" is a protocol-relative URL in the browser.
+    value[1] === "\\"
+  ) {
     return null;
   }
   return value;
