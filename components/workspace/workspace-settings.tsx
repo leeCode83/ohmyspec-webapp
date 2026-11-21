@@ -61,7 +61,7 @@ export function RenameWorkspaceForm({
     <div className="space-y-2">
       <form onSubmit={handleRename} className="flex items-center gap-2">
         <Input value={name} onChange={(e) => setName(e.target.value)} aria-label="Workspace name" required />
-        <Button type="submit" variant="outline" disabled={pending || name.trim() === initialName}>
+        <Button type="submit" variant="outline" disabled={pending || name.trim() === "" || name.trim() === initialName}>
           {pending ? "Saving…" : "Rename"}
         </Button>
       </form>
