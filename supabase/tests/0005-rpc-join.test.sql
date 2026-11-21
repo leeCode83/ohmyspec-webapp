@@ -2,7 +2,7 @@
 -- valid join / duplicate join).
 begin;
 \ir helpers.pgsql
-select plan(5);
+select plan(6);
 
 insert into auth.users (id, email, encrypted_password) values
   ('11111111-1111-1111-1111-111111111111', 'owner-a@test.dev', crypt('Str0ng!Pass', gen_salt('bf')));
@@ -78,6 +78,14 @@ select is(
   join_workspace('CODEOPEN0001'),
   'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'::uuid,
   'valid code joins and returns the workspace id'
+);
+select is(
+  (select count(*) from public.workspace_members
+    where workspace_id = 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'
+      and user_id = '77777777-7777-7777-7777-777777777777'
+      and role = 'member'),
+  1::bigint,
+  'join inserts a plain member row (spec #7)'
 );
 select throws_ok(
   $$select join_workspace('CODEOPEN0001')$$,

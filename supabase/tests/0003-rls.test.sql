@@ -2,7 +2,7 @@
 -- denial, plus the owner-row delete protection and invite privacy (F1).
 begin;
 \ir helpers.pgsql
-select plan(8);
+select plan(12);
 
 insert into auth.users (id, email, encrypted_password) values
   ('11111111-1111-1111-1111-111111111111', 'owner-a@test.dev', crypt('Str0ng!Pass', gen_salt('bf'))),
@@ -25,6 +25,12 @@ select tests.sign_out();
 set local role anon;
 select is((select count(*) from public.workspaces), 0::bigint, 'anonymous cannot select workspaces');
 
+-- create_workspace is revoked from anon (spec §4 executable surface).
+select throws_ok(
+  $$select create_workspace('Nope')$$,
+  '42501'
+);
+
 -- User B (ws B only) sees nothing of ws A.
 select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
 set local role authenticated;
@@ -33,6 +39,18 @@ select is(
   0::bigint,
   'cross-workspace select is denied'
 );
+
+-- Cross-workspace UPDATE denial (spec §7 #1): B holds a column-level UPDATE
+-- grant, so only the "owner updates workspace" USING clause can stop the
+-- rename. Verify owner A sees no renamed row, then restore B's context.
+update public.workspaces set name = 'Hacked' where id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+select tests.authenticate_as('11111111-1111-1111-1111-111111111111');
+select is(
+  (select count(*) from public.workspaces where name = 'Hacked'),
+  0::bigint,
+  'cross-workspace update is denied (owner sees no renamed row)'
+);
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
 select is(
   (select count(*) from public.workspace_members where workspace_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
   0::bigint,
@@ -68,6 +86,24 @@ select is(
     where user_id = '11111111-1111-1111-1111-111111111111'),
   1::bigint,
   'owner self-delete attempt deletes nothing'
+);
+
+-- owner_id is not in the column-level UPDATE grant (spec §3): reassigning
+-- ownership is rejected outright, not silently filtered.
+select throws_ok(
+  $$update public.workspaces set owner_id = '22222222-2222-2222-2222-222222222222'
+    where id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'$$,
+  '42501'
+);
+
+-- Owner-side soft delete via direct UPDATE is closed by RLS (probed: 42501
+-- error — column-level UPDATE grants apply the SELECT policy to the new
+-- row, and the renamed row would fail "members read live workspace"), so
+-- the delete flow is RPC-only.
+select throws_ok(
+  $$update public.workspaces set deleted_at = now()
+    where id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'$$,
+  '42501'
 );
 
 select tests.authenticate_as('33333333-3333-3333-3333-333333333333');
