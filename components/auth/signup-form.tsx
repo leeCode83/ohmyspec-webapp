@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { PasswordChecklist } from "@/components/auth/password-checklist";
 import { createBrowserClient } from "@/lib/supabase/browser";
 import { passwordIsStrong } from "@/lib/auth/password-rules";
-import { safeNextPath } from "@/lib/auth/redirect";
 
 /**
  * Signup form (spec §2.1). Name rides in options.data.name so the
@@ -89,7 +89,7 @@ export function SignupForm({ next }: { next: string | null }) {
         </form>
         <p className="mt-4 text-sm text-muted-foreground">
           Already have an account?{" "}
-          <a className="underline" href="/auth/login">Log in</a>
+          <Link className="underline" href="/auth/login">Log in</Link>
         </p>
       </CardContent>
     </Card>
