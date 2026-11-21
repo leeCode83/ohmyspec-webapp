@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { PlotterArt } from "@/components/figures/plotter/art";
 
@@ -64,7 +66,7 @@ export function Hero() {
               asChild
               className="h-12 bg-[var(--hard-hat)] px-6 text-base text-[var(--graphite)] shadow-[3px_3px_0_var(--graphite)] transition-all hover:bg-[var(--hard-hat)]/90 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
             >
-              <a href="#start">Start a project</a>
+              <Link href="/auth/signup">Start a project</Link>
             </Button>
           </div>
         </div>

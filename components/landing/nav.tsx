@@ -33,7 +33,7 @@ export function Nav() {
             asChild
             className="h-11 bg-[var(--hard-hat)] px-5 text-[var(--graphite)] hover:bg-[var(--hard-hat)]/85"
           >
-            <a href="#start">Start a project</a>
+            <Link href="/auth/signup">Start a project</Link>
           </Button>
         </div>
       </nav>
