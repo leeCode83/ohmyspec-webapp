@@ -2,7 +2,7 @@
 -- segment anchoring, '..' rejection, soft-delete closure, is_member gate.
 begin;
 \ir helpers.pgsql
-select plan(5);
+select plan(6);
 
 insert into auth.users (id, email, encrypted_password) values
   ('11111111-1111-1111-1111-111111111111', 'owner-a@test.dev', crypt('Str0ng!Pass', gen_salt('bf'))),
@@ -50,6 +50,17 @@ select throws_ok(
 select throws_ok(
   $$insert into storage.objects (bucket_id, name)
     values ('imports', 'imports/dddddddd-dddd-dddd-dddd-dddddddddddd/doc-1/file.md')$$,
+  '42501',
+  'new row violates row-level security policy for table "objects"'
+);
+
+-- Owner-side probe isolating the liveness clause: A IS a member of the dead
+-- workspace, so the rejection above cannot be attributed to the membership
+-- gate — only workspace liveness can fail here.
+select tests.authenticate_as('11111111-1111-1111-1111-111111111111');
+select throws_ok(
+  $$insert into storage.objects (bucket_id, name)
+    values ('imports', 'imports/dddddddd-dddd-dddd-dddd-dddddddddddd/doc-1/owner.md')$$,
   '42501',
   'new row violates row-level security policy for table "objects"'
 );

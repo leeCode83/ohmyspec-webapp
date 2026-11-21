@@ -2,7 +2,7 @@
 -- and #8 (soft delete closes reads and joins).
 begin;
 \ir helpers.pgsql
-select plan(8);
+select plan(9);
 
 insert into auth.users (id, email, encrypted_password) values
   ('11111111-1111-1111-1111-111111111111', 'owner-a@test.dev', crypt('Str0ng!Pass', gen_salt('bf'))),
@@ -56,6 +56,16 @@ select throws_ok(
   'The owner cannot leave or remove themselves'
 );
 
+-- B was removed above, so B is now a non-member: remove_member re-checks
+-- ownership inside the definer body and raises (spec §7 #6).
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+select throws_ok(
+  $$select remove_member('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+     '33333333-3333-3333-3333-333333333333')$$,
+  '42501',
+  'Not authorized'
+);
+
 -- Soft delete: owner-only, one-way, closes reads and joins.
 select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
 set local role authenticated;
@@ -68,9 +78,9 @@ select tests.authenticate_as('11111111-1111-1111-1111-111111111111');
 select delete_workspace('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
 select is(
   (select count(*) from public.workspaces
-    where id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' and deleted_at is null),
+    where id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
   0::bigint,
-  'soft-deleted workspace invisible to owner reads'
+  'soft-deleted workspace invisible to owner reads (RLS-pinned)'
 );
 select throws_ok(
   $$select join_workspace('CODEAAAAAA1')$$,
