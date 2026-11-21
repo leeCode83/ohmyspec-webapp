@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { MemberList, type MemberRow } from "@/components/workspace/member-list";
+import { InvitePanel } from "@/components/workspace/invite-panel";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -28,8 +29,6 @@ export default async function WorkspacePage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  // Consumed by the invite-panel/mutations tasks (14–15); derived here now.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isOwner = workspace.owner_id === user?.id;
 
   const { data: members } = await supabase
@@ -57,6 +56,7 @@ export default async function WorkspacePage({
         <h1 className="font-heading text-2xl font-bold">{workspace.name}</h1>
       </header>
       <MemberList members={rows} />
+      {isOwner && <InvitePanel workspaceId={workspace.id} />}
     </main>
   );
 }
