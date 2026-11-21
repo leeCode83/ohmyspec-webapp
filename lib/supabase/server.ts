@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -13,6 +14,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * @returns An RLS-scoped Supabase client bound to the request cookies.
  */
 export async function createClient(): Promise<SupabaseClient> {
+  await connection(); // request-time boundary: auth-js' token-expiry check calls Date.now(), which cacheComponents forbids during prerender
   const cookieStore = await cookies();
 
   return createServerClient(
