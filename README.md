@@ -42,7 +42,7 @@ This 12-step manual checklist doubles as the demo script for M1. Run the app
 walk the steps in order. Steps 1–5 use three identities: user A
 (e.g. `alpha@test.dev`), user B (`beta@test.dev`), user C (`gamma@test.dev`).
 
-1. **Signup with weak password.** Go to `/signup`, type a weak password
+1. **Signup with weak password.** Go to `/auth/signup`, type a weak password
    (e.g. `weak`). The checklist shows unmet rules and the submit button stays
    blocked. With a valid one (e.g. `Str0ng!Pass`) the form submits and lands
    on onboarding.
@@ -83,3 +83,19 @@ walk the steps in order. Steps 1–5 use three identities: user A
 
 No E2E dependencies; automated proof lives in the pgTAP suite (backend plan)
 plus the vitest unit suite for the pure auth logic in `lib/auth`.
+
+## Deploy notes (M1 auth)
+
+- Cloud Supabase auth config mirror: `minimum_password_length = 8`,
+  `password_requirements = "lower_upper_letters_digits_symbols"`, and
+  `[auth.email] enable_confirmations = false` — **the last one matters**:
+  cloud projects default confirmations ON, and the app assumes signup
+  returns a session immediately (spec §1); flip `confirm_email = true`
+  before the M5 OSS release (audit F7).
+- Set `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` to the
+  cloud project values (local dev uses `http://127.0.0.1:54321`).
+- Node 22+ runtime (supabase-js 2.119 declares engines node>=22).
+- Re-run the weak-password signup check against the cloud project after
+  config (expect 422 weak / 200 strong — same curl as the backend plan
+  Task 1).
+- See also `supabase/DEPLOYMENT.md` for the full backend checklist.

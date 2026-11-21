@@ -18,6 +18,12 @@ describe("toUserMessage", () => {
     expect(toUserMessage({ message: "Not authorized" })).toBe("Not authorized");
   });
 
+  it("passes the create_workspace empty-name message through verbatim", () => {
+    expect(toUserMessage({ message: "Workspace name cannot be empty" })).toBe(
+      "Workspace name cannot be empty",
+    );
+  });
+
   it("hides unexpected errors behind the generic message", () => {
     expect(toUserMessage({ message: "relation \"x\" does not exist" })).toBe("Something went wrong");
     expect(toUserMessage({ message: "" })).toBe("Something went wrong");
