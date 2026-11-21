@@ -1,0 +1,409 @@
+/*
+ * auth.css — the auth pages' visual system: a live blueprint sheet with
+ * floating iso tool assets and the form mounted on a 3D clipboard.
+ * All animation is pure CSS and collapses under prefers-reduced-motion.
+ */
+
+/* ═══ Backdrop: floating iso tools (same blueprint token mapping as tools.css) ══ */
+.iso.auth-fig {
+  --anatomy-paper: #f8f8f6;
+  --anatomy-face: #ffffff;
+  --anatomy-top: #ffffff;
+
+  --anatomy-shade-0: #c8cdd6;
+  --anatomy-shade-1: #d4d9e2;
+  --anatomy-shade-2: #dfe3ea;
+  --anatomy-shade-3: #eaecf0;
+
+  --anatomy-lit-top: #ffffff;
+  --anatomy-lit-shade: #e0e4ec;
+
+  --anatomy-hi: #0b0c0e;
+  --anatomy-mid: #4a5060;
+  --anatomy-lo: #8a92a0;
+  --anatomy-faint: #c0c6d0;
+  --anatomy-lit: #0b0c0e;
+
+  --anatomy-halo: #8a9aaa;
+  --anatomy-halo-opacity: 0.22;
+  --anatomy-dot: #2a3040;
+
+  --anatomy-weight: 0.7px;
+}
+
+/* Lit accent parts stay hard-hat yellow, dimmed with the ghost */
+.auth-fig .tool-accent > .iso-fill { fill: var(--hard-hat, #e8a33d) !important; }
+.auth-fig .tool-accent > .iso-shade { fill: color-mix(in srgb, var(--hard-hat, #e8a33d) 62%, #000) !important; }
+.auth-fig .tool-accent > .iso-top { fill: color-mix(in srgb, var(--hard-hat, #e8a33d) 82%, #fff) !important; }
+
+.auth-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* One tool asset: wrapped by .auth-drift for the float motion */
+.auth-fig {
+  position: absolute;
+  opacity: var(--ghost-opacity, 0.9);
+}
+.auth-fig svg { width: 100%; height: auto; }
+
+/* Ambient float: gentle vertical bob around a fixed rest rotation */
+@keyframes auth-bob {
+  0%, 100% { transform: translateY(0) rotate(var(--ghost-rot, 0deg)); }
+  50% { transform: translateY(-16px) rotate(var(--ghost-rot, 0deg)); }
+}
+.auth-drift {
+  animation: auth-bob var(--drift-dur, 9s) ease-in-out var(--drift-delay, 0s) infinite;
+}
+
+/* Plotter trace: a dashed cobalt route marching behind the clipboard */
+.auth-trace {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.auth-trace path {
+  fill: none;
+  stroke: var(--cobalt, #1f2de6);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 9;
+  opacity: 0.3;
+  animation: trace-run 26s linear infinite;
+}
+@keyframes trace-run {
+  to { stroke-dashoffset: -560; }
+}
+
+/* Registration crosses (+) scattered on the sheet */
+.auth-cross {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  opacity: 0.4;
+}
+.auth-cross::before,
+.auth-cross::after {
+  content: "";
+  position: absolute;
+  background: var(--cobalt, #1f2de6);
+}
+.auth-cross::before { left: 50%; top: 0; width: 1.5px; height: 100%; transform: translateX(-50%); }
+.auth-cross::after { top: 50%; left: 0; height: 1.5px; width: 100%; transform: translateY(-50%); }
+
+/* Dimension callout line: tick — dashed — mono label — dashed — tick */
+.auth-dim {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--dim-ink, #8a6a2a);
+}
+.auth-dim i {
+  flex: 1;
+  border-top: 1.5px dashed color-mix(in srgb, var(--dim-ink, #8a6a2a) 55%, transparent);
+}
+.auth-dim i::before,
+.auth-dim i::after {
+  content: "";
+  display: block;
+  height: 9px;
+  border-left: 1.5px solid color-mix(in srgb, var(--dim-ink, #8a6a2a) 75%, transparent);
+  transform: translateY(-4px);
+}
+.auth-dim i::after { float: right; }
+
+/* ═══ Page transition: the whole clipboard is laid onto the sheet ══ */
+.auth-enter > * {
+  animation: clip-land 0.65s cubic-bezier(0.2, 1.25, 0.4, 1) both;
+}
+@keyframes clip-land {
+  from { opacity: 0; transform: translateY(-56px) rotate(-3.5deg) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+}
+
+/* Checklist rows rise in sequence after the board lands */
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.clip-row {
+  animation: row-in 0.4s ease-out both;
+  animation-delay: calc(var(--row, 0) * 80ms + 200ms);
+}
+.clip-head {
+  animation: row-in 0.4s ease-out both;
+  animation-delay: 120ms;
+}
+.clip-foot {
+  animation: row-in 0.4s ease-out both;
+  animation-delay: calc(var(--row, 5) * 80ms + 240ms);
+}
+
+/* ═══ The 3D clipboard ══ */
+.clip-scene {
+  perspective: 1500px;
+}
+
+.clip-board {
+  position: relative;
+  border-radius: 14px;
+  padding: 1rem 1.1rem 1.25rem;
+  background:
+    repeating-linear-gradient(93deg, rgba(114, 69, 22, 0.1) 0 2px, transparent 2px 8px),
+    linear-gradient(180deg, #caa36c 0%, #b78a4e 55%, #a2773f 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -2px 0 rgba(70, 42, 10, 0.4),
+    inset 0 0 0 1px rgba(70, 42, 10, 0.25),
+    0 3px 0 #7c5a2c, /* board thickness */
+    0 34px 70px -20px rgba(11, 12, 14, 0.45),
+    0 12px 24px -12px rgba(11, 12, 14, 0.3);
+  transform: rotateX(5deg);
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+/* The board sits flat once someone starts writing on the paper */
+.clip-scene:focus-within .clip-board {
+  transform: rotateX(0deg) translateY(-3px);
+}
+
+/* Sheets tucked under the top sheet */
+.clip-under {
+  position: absolute;
+  inset: 1rem 1.1rem 1.25rem;
+  border-radius: 6px;
+  background: #f4f2ec;
+  box-shadow: inset 0 0 0 1px rgba(11, 12, 14, 0.06);
+}
+.clip-under:nth-child(1) { transform: rotate(-2.1deg) translate(3px, 2px); }
+.clip-under:nth-child(2) { transform: rotate(1.6deg) translate(-3px, 1px); background: #eceae2; }
+
+/* The top sheet: the form itself */
+.clip-paper {
+  position: relative;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 2.4rem 1.5rem 1.6rem;
+  box-shadow:
+    0 2px 5px rgba(11, 12, 14, 0.14),
+    inset 0 0 0 1px rgba(11, 12, 14, 0.07);
+}
+
+/* Steel clip over the sheet's top edge */
+.clip-metal {
+  position: absolute;
+  top: 0.55rem;
+  left: 50%;
+  z-index: 2;
+  width: 42%;
+  min-width: 150px;
+  height: 30px;
+  transform: translateX(-50%);
+  border-radius: 9px 9px 5px 5px;
+  background: linear-gradient(180deg, #f0f3f7 0%, #bcc5cf 48%, #8e98a3 100%);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 -3px 4px rgba(20, 26, 34, 0.35),
+    0 3px 7px rgba(11, 12, 14, 0.35);
+}
+/* pivot screw + latch notch */
+.clip-metal::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e7ebef, #7d8792 70%);
+  box-shadow: 0 1px 2px rgba(20, 26, 34, 0.4);
+}
+.clip-metal::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 34%;
+  height: 9px;
+  transform: translateX(-50%);
+  border-radius: 0 0 6px 6px;
+  background: linear-gradient(180deg, #aeb7c1, #7f8893);
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.4);
+}
+
+/* Paper header: kicker, title, redline rule */
+.clip-head {
+  border-bottom: 2.5px solid var(--redline, #9a4512);
+  padding-bottom: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+/* ═══ Checklist rows ══ */
+.clip-row {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  column-gap: 0.75rem;
+  padding: 0.7rem 0 0.8rem;
+  border-bottom: 1px solid rgba(11, 12, 14, 0.12);
+}
+.clip-row:last-of-type { border-bottom: 0; }
+
+/* The checkbox: redline tick draws itself when the field is valid */
+.clip-check {
+  position: relative;
+  align-self: start;
+  margin-top: 1px;
+  width: 23px;
+  height: 23px;
+  border: 2px solid rgba(11, 12, 14, 0.6);
+  border-radius: 5px;
+  background: #fff;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+.clip-check svg {
+  position: absolute;
+  inset: 2px;
+  fill: none;
+  stroke: var(--redline, #9a4512);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  transition: stroke-dashoffset 0.3s ease 0.05s;
+}
+.clip-row[data-ok="true"] .clip-check { border-color: var(--redline, #9a4512); }
+.clip-row[data-ok="true"] .clip-check svg { stroke-dashoffset: 0; }
+
+.clip-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(11, 12, 14, 0.72);
+  margin-bottom: 0.3rem;
+  transition: color 0.2s ease;
+}
+.clip-row:focus-within .clip-label { color: var(--cobalt, #1f2de6); }
+
+/* Input: a ruled line on the paper, not a boxed field */
+.clip-input {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-bottom: 1.5px solid rgba(11, 12, 14, 0.28);
+  border-radius: 0;
+  background: transparent;
+  padding: 0.3rem 0.1rem 0.45rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--graphite, #0b0c0e);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.clip-input::placeholder { color: #9aa0ab; font-weight: 400; }
+.clip-input:focus {
+  border-bottom-color: var(--cobalt, #1f2de6);
+  box-shadow: 0 1.5px 0 var(--cobalt, #1f2de6);
+}
+.clip-input:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* Error: redline margin note */
+.clip-error {
+  margin: 0.75rem 0 0.25rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--redline, #9a4512) 40%, transparent);
+  border-left-width: 3px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--redline, #9a4512) 7%, transparent);
+  color: var(--redline, #9a4512);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Footer strip under the rules */
+.clip-foot {
+  margin-top: 0.9rem;
+  border-top: 1px dashed rgba(11, 12, 14, 0.3);
+  padding-top: 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--muted-foreground, #5d6470);
+}
+.clip-foot a {
+  color: var(--cobalt, #1f2de6);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+.clip-foot a:hover { color: var(--redline, #9a4512); }
+
+/* Revision stamp: printed top-right of the paper, beside the clip */
+.clip-stamp {
+  position: absolute;
+  top: 1.1rem;
+  right: 1rem;
+  z-index: 3;
+  transform: rotate(-4deg);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--redline, #9a4512) 75%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--redline, #9a4512) 45%, transparent);
+  border-radius: 3px;
+  padding: 0.2rem 0.45rem;
+  pointer-events: none;
+}
+
+/* Skeleton keeps the clipboard silhouette while signup streams */
+.clip-skeleton-row {
+  height: 3.4rem;
+  border-radius: 4px;
+  background: rgba(11, 12, 14, 0.06);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* ═══ Backdrop placement ══ */
+.tool-pencil-ghost { top: 6%; left: 4%; width: min(300px, 26vw); --ghost-opacity: 0.95; --ghost-rot: -10deg; --drift-dur: 8s; }
+.tool-tape-ghost { bottom: 7%; right: 5%; width: min(260px, 24vw); --ghost-opacity: 0.9; --ghost-rot: 7deg; --drift-dur: 10s; --drift-delay: 1.2s; }
+.tool-wrench-ghost { top: 12%; right: 7%; width: min(190px, 18vw); --ghost-opacity: 0.6; --ghost-rot: 12deg; --drift-dur: 12s; --drift-delay: 2s; }
+.tool-level-ghost { bottom: 10%; left: 6%; width: min(200px, 19vw); --ghost-opacity: 0.6; --ghost-rot: -6deg; --drift-dur: 11s; --drift-delay: 0.6s; }
+
+@media (max-width: 640px) {
+  .tool-pencil-ghost { top: 4.5rem; left: 2%; width: 150px; }
+  .tool-tape-ghost { bottom: 3%; right: 2%; width: 130px; }
+  .tool-wrench-ghost,
+  .tool-level-ghost,
+  .auth-dim { display: none; }
+  .clip-paper { padding-inline: 1.1rem; }
+}
+
+/* ═══ Reduced motion: everything rests, nothing hidden ══ */
+@media (prefers-reduced-motion: reduce) {
+  .auth-drift,
+  .auth-trace path,
+  .auth-enter > *,
+  .clip-row,
+  .clip-head,
+  .clip-foot,
+  .clip-skeleton-row { animation: none; opacity: 1; }
+  .clip-board,
+  .clip-check svg { transition: none; }
+  .clip-row,
+  .clip-head,
+  .clip-foot { opacity: 1; transform: none; }
+}

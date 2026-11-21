@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { ClipboardCard, ClipRow } from "@/components/auth/clipboard-card";
 import { PasswordChecklist } from "@/components/auth/password-checklist";
 import { createBrowserClient } from "@/lib/supabase/browser";
 import { passwordIsStrong } from "@/lib/auth/password-rules";
+
+const EMAIL_RE = /\S+@\S+\.\S+/;
 
 /**
  * Signup form (spec §2.1). Name rides in options.data.name so the
@@ -50,48 +50,69 @@ export function SignupForm({ next }: { next: string | null }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create your account</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+    <ClipboardCard
+      kicker="FORM A-02 — CREW"
+      title="Join the crew"
+      subtitle="Create an account and start closing specs."
+      stamp="REV. A · NEW"
+      footer={
+        <>
+          Already have an account? <Link href="/auth/login">Log in</Link>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="mt-2">
+        <ClipRow label="Name" htmlFor="name" ok={name.trim().length >= 2} index={0}>
+          <input
+            id="name"
+            className="clip-input"
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </ClipRow>
+        <ClipRow label="Email" htmlFor="email" ok={EMAIL_RE.test(email)} index={1}>
+          <input
+            id="email"
+            className="clip-input"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </ClipRow>
+        <ClipRow label="Password" htmlFor="password" ok={passwordIsStrong(password)} index={2}>
+          <input
+            id="password"
+            className="clip-input"
+            type="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            aria-describedby="password-checklist"
+          />
+          <div id="password-checklist" className="mt-2">
+            <PasswordChecklist password={password} />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              aria-describedby="password-checklist"
-            />
-            <div id="password-checklist">
-              <PasswordChecklist password={password} />
-            </div>
-          </div>
-          {error && (
-            <p className="text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          )}
-          <Button type="submit" className="w-full" disabled={pending}>
+        </ClipRow>
+        {error && (
+          <p className="clip-error" role="alert">
+            {error}
+          </p>
+        )}
+        <div className="mt-4">
+          <Button
+            type="submit"
+            className="h-11 w-full bg-[var(--hard-hat)] text-base font-bold text-[var(--graphite)] shadow-[3px_3px_0_var(--graphite)] hover:bg-[var(--hard-hat)]/90 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+            disabled={pending}
+          >
             {pending ? "Signing up…" : "Sign up"}
           </Button>
-        </form>
-        <p className="mt-4 text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link className="underline" href="/auth/login">Log in</Link>
-        </p>
-      </CardContent>
-    </Card>
+        </div>
+      </form>
+    </ClipboardCard>
   );
 }

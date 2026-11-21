@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ClipboardCard } from "@/components/auth/clipboard-card";
 import { SignupForm } from "@/components/auth/signup-form";
 import { safeNextPath } from "@/lib/auth/redirect";
 
@@ -30,20 +30,19 @@ async function SignupSection({
 
 function SignupCardSkeleton() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="h-6 w-40 animate-pulse rounded bg-muted" />
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="h-5 w-16 animate-pulse rounded bg-muted" />
-        <div className="h-9 animate-pulse rounded-md bg-muted" />
-        <div className="h-5 w-14 animate-pulse rounded bg-muted" />
-        <div className="h-9 animate-pulse rounded-md bg-muted" />
-        <div className="h-5 w-20 animate-pulse rounded bg-muted" />
-        <div className="h-9 animate-pulse rounded-md bg-muted" />
-        <div className="h-9 animate-pulse rounded-md bg-muted" />
-        <div className="h-5 w-48 animate-pulse rounded bg-muted" />
-      </CardContent>
-    </Card>
+    <ClipboardCard
+      kicker="FORM A-02 — CREW"
+      title="Join the crew"
+      subtitle="Create an account and start closing specs."
+      stamp="REV. A · NEW"
+      footer={<span className="opacity-40">Already have an account? Log in</span>}
+    >
+      <div className="mt-2 space-y-3" aria-hidden>
+        <div className="clip-skeleton-row" />
+        <div className="clip-skeleton-row" />
+        <div className="clip-skeleton-row h-24" />
+        <div className="clip-skeleton-row h-11" />
+      </div>
+    </ClipboardCard>
   );
 }

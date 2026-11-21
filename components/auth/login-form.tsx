@@ -4,11 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { ClipboardCard, ClipRow } from "@/components/auth/clipboard-card";
 import { createBrowserClient } from "@/lib/supabase/browser";
 import { safeNextPath } from "@/lib/auth/redirect";
+
+const EMAIL_RE = /\S+@\S+\.\S+/;
 
 /**
  * Login form (spec §2.2). Invalid credentials surface the Supabase Auth
@@ -44,36 +44,58 @@ export function LoginForm({ next }: { next: string | null }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Log in</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          </div>
-          {error && (
-            <p className="text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          )}
-          <Button type="submit" className="w-full" disabled={pending}>
-            {pending ? "Logging in…" : "Log in"}
-          </Button>
-        </form>
-        <p className="mt-4 text-sm text-muted-foreground">
+    <ClipboardCard
+      kicker="FORM A-01 — CREW"
+      title="Welcome back"
+      subtitle="Log in to open your workspace."
+      stamp="REV. A · LOGIN"
+      footer={
+        <>
           No account yet?{" "}
-          <Link className="underline" href={{ pathname: "/auth/signup", query: next ? { next } : {} }}>
+          <Link href={{ pathname: "/auth/signup", query: next ? { next } : {} }}>
             Sign up
           </Link>
-        </p>
-      </CardContent>
-    </Card>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="mt-2">
+        <ClipRow label="Email" htmlFor="email" ok={EMAIL_RE.test(email)} index={0}>
+          <input
+            id="email"
+            className="clip-input"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </ClipRow>
+        <ClipRow label="Password" htmlFor="password" ok={password.length > 0} index={1}>
+          <input
+            id="password"
+            className="clip-input"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </ClipRow>
+        {error && (
+          <p className="clip-error" role="alert">
+            {error}
+          </p>
+        )}
+        <div className="mt-4">
+          <Button
+            type="submit"
+            className="h-11 w-full bg-[var(--hard-hat)] text-base font-bold text-[var(--graphite)] shadow-[3px_3px_0_var(--graphite)] hover:bg-[var(--hard-hat)]/90 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+            disabled={pending}
+          >
+            {pending ? "Logging in…" : "Log in"}
+          </Button>
+        </div>
+      </form>
+    </ClipboardCard>
   );
 }
