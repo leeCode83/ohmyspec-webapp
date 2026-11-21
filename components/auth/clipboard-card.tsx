@@ -36,10 +36,10 @@ export function ClipboardCard({
           <span className="clip-metal" aria-hidden />
           <header className="clip-head">
             <p className="type-label text-[var(--cobalt)]">{kicker}</p>
-            <h1 className="type-display mt-1.5 text-[1.75rem] leading-tight text-[var(--graphite)]">
+            <h1 className="type-display mt-1 text-[1.5rem] leading-tight text-[var(--graphite)]">
               {title}
             </h1>
-            <p className="mt-1.5 text-[0.9375rem] font-medium text-muted-foreground">
+            <p className="mt-1 text-[0.875rem] font-medium text-muted-foreground">
               {subtitle}
             </p>
           </header>

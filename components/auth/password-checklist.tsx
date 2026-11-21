@@ -11,17 +11,17 @@ import { PASSWORD_RULES } from "@/lib/auth/password-rules";
  */
 export function PasswordChecklist({ password }: { password: string }) {
   return (
-    <ul className="space-y-1" aria-label="Password requirements">
+    <ul className="space-y-0.5" aria-label="Password requirements">
       {PASSWORD_RULES.map((rule) => {
         const ok = rule.test(password);
         return (
           <li
             key={rule.id}
-            className={`flex items-center gap-1.5 font-mono text-[0.75rem] font-semibold tracking-wide ${
+            className={`flex items-center gap-1.5 font-mono text-[0.6875rem] font-semibold tracking-wide ${
               ok ? "text-[var(--redline)]" : "text-muted-foreground"
             }`}
           >
-            <span aria-hidden className="inline-block w-4 text-center">
+            <span aria-hidden className="inline-block w-3 text-center">
               {ok ? "✓" : "·"}
             </span>
             {rule.label}

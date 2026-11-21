@@ -18,7 +18,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <span aria-hidden className="inline-block h-2 w-2 translate-y-[-1px] rounded-[2px] bg-[var(--hard-hat)]" />
         </Link>
       </header>
-      <div className="relative z-10 flex flex-1 items-center justify-center px-6 py-10 md:py-14">
+      <div className="relative z-10 flex flex-1 items-center justify-center px-6 py-5 md:py-8">
         {children}
       </div>
       <footer className="relative z-10 pb-5 text-center">

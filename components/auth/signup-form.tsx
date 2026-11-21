@@ -24,6 +24,7 @@ export function SignupForm({ next }: { next: string | null }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [pwFocused, setPwFocused] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -61,7 +62,7 @@ export function SignupForm({ next }: { next: string | null }) {
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="mt-2">
+      <form onSubmit={handleSubmit} className="mt-1">
         <ClipRow label="Name" htmlFor="name" ok={name.trim().length >= 2} index={0}>
           <input
             id="name"
@@ -91,22 +92,27 @@ export function SignupForm({ next }: { next: string | null }) {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onFocus={() => setPwFocused(true)}
+            onBlur={() => setPwFocused(false)}
             required
             aria-describedby="password-checklist"
           />
-          <div id="password-checklist" className="mt-2">
-            <PasswordChecklist password={password} />
-          </div>
+          {/* Checklist only shows while choosing/typing the password */}
+          {(pwFocused || password.length > 0) && (
+            <div id="password-checklist" className="mt-1">
+              <PasswordChecklist password={password} />
+            </div>
+          )}
         </ClipRow>
         {error && (
           <p className="clip-error" role="alert">
             {error}
           </p>
         )}
-        <div className="mt-4">
+        <div className="mt-3">
           <Button
             type="submit"
-            className="h-11 w-full bg-[var(--hard-hat)] text-base font-bold text-[var(--graphite)] shadow-[3px_3px_0_var(--graphite)] hover:bg-[var(--hard-hat)]/90 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+            className="h-10 w-full bg-[var(--hard-hat)] text-base font-bold text-[var(--graphite)] shadow-[3px_3px_0_var(--graphite)] hover:bg-[var(--hard-hat)]/90 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
             disabled={pending}
           >
             {pending ? "Signing up…" : "Sign up"}

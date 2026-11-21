@@ -86,10 +86,10 @@ export function LoginForm({ next }: { next: string | null }) {
             {error}
           </p>
         )}
-        <div className="mt-4">
+        <div className="mt-3">
           <Button
             type="submit"
-            className="h-11 w-full bg-[var(--hard-hat)] text-base font-bold text-[var(--graphite)] shadow-[3px_3px_0_var(--graphite)] hover:bg-[var(--hard-hat)]/90 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+            className="h-10 w-full bg-[var(--hard-hat)] text-base font-bold text-[var(--graphite)] shadow-[3px_3px_0_var(--graphite)] hover:bg-[var(--hard-hat)]/90 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
             disabled={pending}
           >
             {pending ? "Logging in…" : "Log in"}

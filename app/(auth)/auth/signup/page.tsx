@@ -41,7 +41,7 @@ function SignupCardSkeleton() {
         <div className="clip-skeleton-row" />
         <div className="clip-skeleton-row" />
         <div className="clip-skeleton-row h-24" />
-        <div className="clip-skeleton-row h-11" />
+        <div className="clip-skeleton-row h-10" />
       </div>
     </ClipboardCard>
   );
