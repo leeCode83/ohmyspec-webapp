@@ -8,19 +8,34 @@
 --   8-11 native-with-metadata and imported-missing-metadata rejected
 --   12   imported-complete accepted
 --   13-16 defaults (content_md, version, updated_by, timestamps)
+--   17-26 RLS (spec §8 group 3): trash visibility, non-member denial,
+--         soft-deleted-workspace invisibility, CRUD ok/denied pairs,
+--         non-granted column denial
 begin;
 \ir helpers.pgsql
-select plan(16);
+select plan(26);
 
 insert into auth.users (id, email, encrypted_password) values
   ('11111111-1111-1111-1111-111111111111', 'owner-a@test.dev', crypt('Str0ng!Pass', gen_salt('bf'))),
-  ('22222222-2222-2222-2222-222222222222', 'member-b@test.dev', crypt('Str0ng!Pass', gen_salt('bf')));
+  ('22222222-2222-2222-2222-222222222222', 'member-b@test.dev', crypt('Str0ng!Pass', gen_salt('bf'))),
+  ('33333333-3333-3333-3333-333333333333', 'stranger-c@test.dev', crypt('Str0ng!Pass', gen_salt('bf')));
 
 insert into public.workspaces (id, name, owner_id)
 values ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Ws A', '11111111-1111-1111-1111-111111111111');
 insert into public.workspace_members (workspace_id, user_id, role) values
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 'owner'),
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', 'member');
+
+-- Ws C: soft-deleted workspace with a stranded document — its former
+-- member must see nothing of it (is_active_member requires a live ws).
+insert into public.workspaces (id, name, owner_id)
+values ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Ws C', '33333333-3333-3333-3333-333333333333');
+insert into public.workspace_members (workspace_id, user_id, role)
+values ('cccccccc-cccc-cccc-cccc-cccccccccccc', '33333333-3333-3333-3333-333333333333', 'owner');
+insert into public.documents (workspace_id, title, type, source)
+values ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Buried doc', 'spec', 'native');
+update public.workspaces set deleted_at = now()
+where id = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
 
 -- ── Grup 1: Constraints ─────────────────────────────────────────────
 
@@ -130,6 +145,123 @@ select ok(
   (select created_at is not null and updated_at is not null
     from public.documents where title = 'Default doc'),
   'timestamps set on insert'
+);
+
+-- ── Grup 3: RLS ─────────────────────────────────────────────────────
+
+reset role;
+
+-- 17: member sees own-workspace docs INCLUDING soft-deleted (trash
+-- visibility — no deleted_at filter in the policy).
+insert into public.documents (id, workspace_id, title, type, source)
+values ('c0000000-0000-0000-0000-000000000003', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Trashed', 'plan', 'native');
+update public.documents set deleted_at = now()
+where id = 'c0000000-0000-0000-0000-000000000003';
+select tests.authenticate_as('11111111-1111-1111-1111-111111111111');
+set local role authenticated;
+select is(
+  (select count(*) from public.documents
+    where workspace_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+  4::bigint,
+  'member sees own-workspace docs including soft-deleted'
+);
+
+-- 18: non-member sees nothing of Ws A.
+select tests.authenticate_as('33333333-3333-3333-3333-333333333333');
+select is(
+  (select count(*) from public.documents
+    where workspace_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+  0::bigint,
+  'non-member sees nothing'
+);
+
+-- 19: former member of a soft-deleted workspace sees nothing —
+-- is_active_member requires the workspace to be alive.
+select is(
+  (select count(*) from public.documents
+    where workspace_id = 'cccccccc-cccc-cccc-cccc-cccccccccccc'),
+  0::bigint,
+  'former member of soft-deleted workspace sees nothing'
+);
+
+-- 20: member insert ok (granted columns only — id is server-generated,
+-- so the row is found by its unique title).
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+insert into public.documents (workspace_id, title, type, source)
+values ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Inserted by B', 'tasks', 'native');
+select is(
+  (select count(*) from public.documents where title = 'Inserted by B'),
+  1::bigint,
+  'member insert ok'
+);
+
+-- 21: non-member insert denied — RLS WITH CHECK fails as 42501.
+select tests.authenticate_as('33333333-3333-3333-3333-333333333333');
+select throws_ok(
+  $$insert into public.documents (workspace_id, title, type, source)
+    values ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Sneaky', 'spec', 'native')$$,
+  '42501'
+);
+
+-- 22: insert naming a non-granted column (updated_by) denied even for a
+-- member — column grants are the trust boundary, clients cannot forge
+-- server-owned columns.
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+select throws_ok(
+  $$insert into public.documents (workspace_id, title, type, source, updated_by)
+    values ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Forge', 'spec', 'native',
+            '22222222-2222-2222-2222-222222222222')$$,
+  '42501'
+);
+
+-- 23: member update ok.
+update public.documents set title = 'Renamed by B'
+where title = 'Inserted by B';
+select is(
+  (select title from public.documents
+    where workspace_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+      and type = 'tasks'),
+  'Renamed by B',
+  'member update ok'
+);
+
+-- 24: non-member update matches 0 rows — silently ignored, no error.
+-- The state check re-authenticates as a member: C cannot see the row at
+-- all, so C's own view proves nothing about the row's content.
+select tests.authenticate_as('33333333-3333-3333-3333-333333333333');
+update public.documents set title = 'hijacked'
+where title = 'Renamed by B';
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+select is(
+  (select title from public.documents
+    where workspace_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+      and type = 'tasks'),
+  'Renamed by B',
+  'non-member update silently ignored'
+);
+
+-- 25: member delete ok.
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+delete from public.documents
+where title = 'Renamed by B';
+select is(
+  (select count(*) from public.documents where title = 'Renamed by B'),
+  0::bigint,
+  'member delete ok'
+);
+
+-- 26: non-member delete matches 0 rows — the row survives (state
+-- checked as a member, same reason as assertion 24).
+select tests.authenticate_as('33333333-3333-3333-3333-333333333333');
+delete from public.documents
+where id = 'c0000000-0000-0000-0000-000000000002';
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+select is(
+  (select count(*) from public.documents
+    where id = 'c0000000-0000-0000-0000-000000000002'),
+  1::bigint,
+  'non-member delete silently ignored'
 );
 
 select * from finish();
