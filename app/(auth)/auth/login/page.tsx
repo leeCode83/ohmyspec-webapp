@@ -1,5 +1,7 @@
 import { LoginForm } from "@/components/auth/login-form";
 
+export const instant = false; // blocking route: reads ?next= searchParams per request
+
 /**
  * Login page (spec §2.2).
  */

@@ -5,6 +5,8 @@ import { AppHeader } from "@/components/app/app-header";
 import { createClient } from "@/lib/supabase/server";
 import { getMyWorkspaces } from "@/lib/workspaces/queries";
 
+export const instant = false; // blocking route: "/" checks auth cookies per request
+
 /**
  * Hybrid "/" (user decision): anonymous visitors get the marketing landing;
  * authenticated users get the dashboard (spec §2.6) — or a bounce to

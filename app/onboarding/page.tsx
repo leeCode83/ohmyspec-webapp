@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { OnboardingForms } from "@/components/auth/onboarding-forms";
 import { getMyWorkspaces } from "@/lib/workspaces/queries";
 
+export const instant = false; // blocking route: reads RLS-scoped workspaces (cookies) per request
+
 /**
  * Mandatory onboarding (spec §2.4): authenticated users WITH a workspace
  * are bounced to the dashboard; without one they cannot pass into (app)

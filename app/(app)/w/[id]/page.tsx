@@ -11,6 +11,8 @@ import {
 } from "@/components/workspace/workspace-settings";
 import { createClient } from "@/lib/supabase/server";
 
+export const instant = false; // blocking route: RLS-scoped reads need the session cookies
+
 /**
  * Workspace page, M1 shape (spec §2.7): header with name, members list,
  * the owner invite panel, mutation actions per role, and the danger zone

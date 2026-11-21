@@ -2,6 +2,8 @@ import Link from "next/link";
 import { JoinButton } from "@/components/join/join-button";
 import { createClient } from "@/lib/supabase/server";
 
+export const instant = false; // blocking route: resolves invite code + auth cookies per request
+
 /**
  * Invite landing page (spec §2.5) — the only route that passes through for
  * anonymous AND authenticated users. Resolves the code via the read-only
