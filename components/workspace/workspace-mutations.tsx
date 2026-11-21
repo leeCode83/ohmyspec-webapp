@@ -9,9 +9,8 @@ import { shouldShowTechnicalDetails, toUserMessage } from "@/lib/auth/errors";
 
 /**
  * Inline error line for RPC/row failures: whitelisted message as-is,
- * otherwise the generic fallback — the raw error stays in the console for
- * debugging (devtools) while the details block pattern is available via
- * the shared helper if rendered.
+ * otherwise the generic fallback — the raw message surfaces via the
+ * TechnicalDetails details block when shouldShowTechnicalDetails passes.
  */
 function InlineError({ error }: { error: { message: string } | null }) {
   if (!error) return null;

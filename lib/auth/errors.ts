@@ -13,6 +13,7 @@ const KNOWN_DB_MESSAGES = [
   "This workspace is full (10 members max)",
   "You are already a member of this workspace",
   "The owner cannot leave or remove themselves",
+  "Workspace name cannot be empty",
   "Not authorized",
 ] as const;
 
