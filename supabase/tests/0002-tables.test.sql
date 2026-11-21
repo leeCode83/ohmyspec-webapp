@@ -2,7 +2,7 @@
 -- demoted. (Owner removal is protected by RLS policies, Task 4.)
 begin;
 \ir helpers.pgsql
-select plan(3);
+select plan(4);
 
 insert into auth.users (id, email, encrypted_password) values
   ('11111111-1111-1111-1111-111111111111', 'owner-a@test.dev', crypt('Str0ng!Pass', gen_salt('bf'))),
@@ -13,6 +13,9 @@ values ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Ws A', '11111111-1111-1111-1111
 
 insert into public.workspace_members (workspace_id, user_id, role)
 values ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 'owner');
+
+insert into public.workspace_members (workspace_id, user_id, role)
+values ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', 'member');
 
 select throws_ok(
   $$insert into public.workspace_members (workspace_id, user_id, role)
@@ -27,9 +30,16 @@ select throws_ok(
   'The owner role cannot be demoted'
 );
 
+select throws_ok(
+  $$update public.workspace_members set role = 'owner'
+    where workspace_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+      and user_id = '22222222-2222-2222-2222-222222222222'$$,
+  'A workspace can only have one owner'
+);
+
 select is(
   (select count(*) from public.workspace_members where workspace_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
-  1::bigint,
+  2::bigint,
   'rejected writes leave the membership untouched'
 );
 
