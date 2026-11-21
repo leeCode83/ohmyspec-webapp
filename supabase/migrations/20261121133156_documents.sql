@@ -124,3 +124,52 @@ $$;
 create trigger documents_touch
   before update of title, content_md, deleted_at on public.documents
   for each row execute function public.documents_touch();
+
+-- §5 — Soft lock. The one RPC (decision 2): acquiring must atomically
+-- test-and-set locked_by/locked_at, which plain RLS UPDATEs cannot do.
+-- Security definer because eligibility is checked internally (a definer
+-- bypasses RLS): document exists, is live, is editable (PRD §4.1 —
+-- .docx/.pdf imports get no soft lock), and the caller is a member of a
+-- live workspace. Any failure → NULL (decision 6: silent refusal — the
+-- client shows the "X is editing" banner either way and cannot
+-- distinguish). Three-branch acquire in one atomic UPDATE — free,
+-- mine (refresh locked_at), or expired (> 2 minutes, PRD §7.5.7); a
+-- competing acquirer's row lock serializes them, the loser sees 0 rows
+-- and gets NULL. Heartbeat and release stay plain UPDATEs (§5.2) — the
+-- client only writes locked_* for a document it holds.
+create or replace function public.acquire_document_lock(p_doc uuid)
+returns public.documents
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_ws      uuid;
+  v_current public.documents;
+begin
+  select workspace_id into v_ws
+  from public.documents
+  where id = p_doc
+    and deleted_at is null
+    and (source = 'native' or (source = 'imported' and file_type = 'md'));
+
+  if v_ws is null or not public.is_active_member(v_ws) then
+    return null;
+  end if;
+
+  update public.documents d
+  set locked_by = auth.uid(), locked_at = now()
+  where d.id = p_doc
+    and (
+      d.locked_by is null
+      or d.locked_by = auth.uid()
+      or d.locked_at < now() - interval '2 minutes'
+    )
+  returning * into v_current;
+
+  return v_current;
+end;
+$$;
+
+revoke execute on function public.acquire_document_lock(uuid) from public;
+grant execute on function public.acquire_document_lock(uuid) to authenticated;

@@ -14,9 +14,12 @@
 --   27-35 trigger (spec §8 group 2) + conditional autosave (group 5):
 --         version/updated_by/updated_at bumps, no-bump cases, stale
 --         version / wrong holder / trashed row save denials
+--   41-47 acquire RPC (spec §8 group 4): free/mine/expired branches,
+--         editability (docx refused, md ok), trashed refusal
+--   48-49 cross-workspace (group 6, PRD success criteria #3)
 begin;
 \ir helpers.pgsql
-select plan(40);
+select plan(49);
 
 insert into auth.users (id, email, encrypted_password) values
   ('11111111-1111-1111-1111-111111111111', 'owner-a@test.dev', crypt('Str0ng!Pass', gen_salt('bf'))),
@@ -428,6 +431,124 @@ select is(
   (select content_md from public.documents where title = 'Save me'),
   'saved',
   'autosave against soft-deleted document matches 0 rows'
+);
+
+-- ── Grup 4: Acquire RPC ─────────────────────────────────────────────
+
+reset role;
+
+-- Live Ws B for the cross-workspace cases (grup 6): C owns it and is
+-- not a member of Ws A.
+insert into public.workspaces (id, name, owner_id)
+values ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Ws B', '33333333-3333-3333-3333-333333333333');
+insert into public.workspace_members (workspace_id, user_id, role)
+values ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '33333333-3333-3333-3333-333333333333', 'owner');
+
+-- RPC fixtures: free / fresh-locked-by-A / expired-locked-by-A /
+-- imported docx (never lockable) / imported md (lockable) / trashed /
+-- cross-workspace target.
+insert into public.documents (id, workspace_id, title, type, source)
+values ('c0000000-0000-0000-0000-000000000007', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Free lock', 'spec', 'native');
+insert into public.documents (id, workspace_id, title, type, source)
+values ('c0000000-0000-0000-0000-000000000008', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Fresh lock', 'spec', 'native');
+insert into public.documents (id, workspace_id, title, type, source)
+values ('c0000000-0000-0000-0000-000000000009', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Expired lock', 'spec', 'native');
+insert into public.documents (id, workspace_id, title, type, source, file_type, storage_path)
+values ('c0000000-0000-0000-0000-00000000000a', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Imported docx', 'urs', 'imported', 'docx', 'ws/a.docx');
+insert into public.documents (id, workspace_id, title, type, source, file_type, storage_path)
+values ('c0000000-0000-0000-0000-00000000000b', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Imported md', 'urs', 'imported', 'md', 'ws/a.md');
+insert into public.documents (id, workspace_id, title, type, source)
+values ('c0000000-0000-0000-0000-00000000000c', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Trashed lock', 'spec', 'native');
+insert into public.documents (id, workspace_id, title, type, source)
+values ('c0000000-0000-0000-0000-00000000000d', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'Cross doc', 'spec', 'native');
+
+update public.documents
+set locked_by = '11111111-1111-1111-1111-111111111111'::uuid, locked_at = now()
+where title in ('Fresh lock', 'Expired lock');
+update public.documents set locked_at = now() - interval '3 minutes'
+where title = 'Expired lock';
+update public.documents set deleted_at = now() where title = 'Trashed lock';
+
+-- 41: free lock → row returned, locked_by set.
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+set local role authenticated;
+select is(
+  (select (public.acquire_document_lock('c0000000-0000-0000-0000-000000000007')).locked_by),
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'free lock acquired: row returned with locked_by set'
+);
+
+-- 42: re-acquire while mine → locked_at refreshed.
+reset role;
+update public.documents set locked_at = '2000-01-01 00:00:00+00'::timestamptz
+where title = 'Free lock';
+select tests.authenticate_as('22222222-2222-2222-2222-222222222222');
+set local role authenticated;
+select ok(
+  (select (public.acquire_document_lock('c0000000-0000-0000-0000-000000000007')).locked_at
+     > '2000-01-01 00:00:00+00'::timestamptz),
+  're-acquire while mine refreshes locked_at'
+);
+
+-- 43: other member's fresh lock → NULL (silent refusal, decision 6).
+select is(
+  (select public.acquire_document_lock('c0000000-0000-0000-0000-000000000008') is null),
+  true,
+  'fresh lock held by another member refused'
+);
+
+-- 44: other member's expired lock (backdated 3 min) → takeover.
+select is(
+  (select (public.acquire_document_lock('c0000000-0000-0000-0000-000000000009')).locked_by),
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'expired lock (3 min) taken over'
+);
+
+-- 45: imported .docx → NULL (PRD §4.1: no soft lock for docx/pdf).
+select is(
+  (select public.acquire_document_lock('c0000000-0000-0000-0000-00000000000a') is null),
+  true,
+  'imported .docx refused (no soft lock)'
+);
+
+-- 46: imported .md is editable → lockable.
+select is(
+  (select (public.acquire_document_lock('c0000000-0000-0000-0000-00000000000b')).locked_by),
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'imported .md lockable (editable)'
+);
+
+-- 47: soft-deleted document → NULL.
+select is(
+  (select public.acquire_document_lock('c0000000-0000-0000-0000-00000000000c') is null),
+  true,
+  'soft-deleted document refused'
+);
+
+-- ── Grup 6: Cross-workspace (PRD success criteria #3) ───────────────
+
+-- 48: member of Ws B sees 0 rows of Ws A documents.
+select tests.authenticate_as('33333333-3333-3333-3333-333333333333');
+select is(
+  (select count(*) from public.documents
+    where workspace_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
+  0::bigint,
+  'member of another workspace sees 0 rows'
+);
+
+-- 49: acquire from the other workspace refused → NULL. Also covers the
+-- plain non-member refusal (same is_active_member predicate, decision 6).
+select is(
+  (select public.acquire_document_lock('c0000000-0000-0000-0000-00000000000d') is null),
+  true,
+  'acquire from another workspace refused'
 );
 
 select * from finish();
